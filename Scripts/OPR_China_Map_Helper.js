@@ -103,7 +103,7 @@
         var wgs_lng = position.split(",")[1];
         var gcj = wgs84togcj02(wgs_lng, wgs_lat);
         var href = "http://map.qq.com/?type=marker&isopeninfowin=1&markertype=1&name=" + name + "&addr=" + position + "&pointy=" + gcj[1] + "&pointx=" + gcj[0];
-        window.open(href, "_blank");
+        window.open(href, "OPR_TecentMap");
     }
 
     function goto_baidu_map() {
@@ -113,7 +113,7 @@
         var wgs_lat = position.split(",")[0];
         var wgs_lng = position.split(",")[1];
         var href = "http://api.map.baidu.com/marker?location=" + wgs_lat + "," + wgs_lng + "&title=" + name + "&content=Application&output=html&coord_type=wgs84";
-        window.open(href, "_blank");
+        window.open(href, "OPR_BaiduMap");
     }
 
     function goto_OSM() {
@@ -123,7 +123,7 @@
         var wgs_lat = position.split(",")[0];
         var wgs_lng = position.split(",")[1];
         var href = "http://www.openstreetmap.org/search?query=" + wgs_lat + "," + wgs_lng + "#map=16/" + wgs_lat + "/" + wgs_lng;
-        window.open(href, "_blank");
+        window.open(href, "OPR_OSM");
     }
 
     var target = document.getElementById("descriptionDiv");
