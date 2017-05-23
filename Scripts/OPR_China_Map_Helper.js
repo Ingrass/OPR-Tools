@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         OPR China Map Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Add some buttons for China map in OPR
 // @author       Ethern Triomphe346 记忆的残骸
 // @match        https://opr.ingress.com/recon
