@@ -91,8 +91,23 @@
         var name = target.getElementsByTagName('a')[0].innerHTML;
         var position = target.getElementsByTagName('a')[1].getAttribute("href");
         name = /^\s*(.*)\s*$/.exec(name)[1];
-        position = /@(.*)$/.exec(position)[1];
+        if (position.indexOf("www.ingress.com/intel?ll=") >= 0) {
+            position = /=(.*)$/.exec(position)[1];
+            var end = position.indexOf("&z=20");
+            if (end >= 0) {
+                position = position.substring(0, end);
+            }
+        } else {
+            position = /@(.*)$/.exec(position)[1];
+        }
         return [name, position];
+    }
+
+    function goto_intel_map() {
+        var portal_info = get_portal_info();
+        var position = portal_info[1];
+        var href = "https://www.ingress.com/intel?ll=" + position + "&z=20";
+        window.open(href, "Intel");
     }
 
     function goto_tencent_map() {
@@ -116,6 +131,16 @@
         window.open(href, "OPR_BaiduMap");
     }
 
+    function goto_gaode_map() {
+        var portal_info = get_portal_info();
+        var name = portal_info[0];
+        var position = portal_info[1];
+        var wgs_lat = position.split(",")[0];
+        var wgs_lng = position.split(",")[1];
+        var href = "http://uri.amap.com/marker?position=" + wgs_lng + "," + wgs_lat + "&name=" + name + "&coordinate=wgs84&callnative=0";
+        window.open(href, "OPR_GaodeMap");
+    }
+
     function goto_OSM() {
         var portal_info = get_portal_info();
         // var name = portal_info[0];
@@ -129,6 +154,14 @@
     var target = document.getElementById("descriptionDiv");
     target.appendChild(document.createElement("br"));
     target.appendChild(document.createElement("br"));
+
+    //Ingress Intel Button
+    var intel_map_button = document.createElement("button");
+    var textnode = document.createTextNode("Intel");
+    intel_map_button.className += "button";
+    intel_map_button.onclick = goto_intel_map;
+    intel_map_button.appendChild(textnode);
+    target.appendChild(intel_map_button);
 
     //Tencent Map Button
     var tencent_map_button = document.createElement("button");
@@ -145,6 +178,14 @@
     baidu_map_button.onclick = goto_baidu_map;
     baidu_map_button.appendChild(textnode);
     target.appendChild(baidu_map_button);
+
+    //Gaode Map Button
+    var gaode_map_button = document.createElement("button");
+    var textnode = document.createTextNode("Gaode Map");
+    gaode_map_button.className += "button";
+    gaode_map_button.onclick = goto_gaode_map;
+    gaode_map_button.appendChild(textnode);
+    target.appendChild(gaode_map_button);
 
     //OSM Button
     var OSM_button = document.createElement("button");
