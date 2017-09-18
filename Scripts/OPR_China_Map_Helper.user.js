@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.4.1
+// @version      0.4.2
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    http://ethern.me/ingress/OPR_China_Map_Helper.user.js
@@ -52,7 +52,7 @@
     }
 
     /**
-     * WGS84转GCj02
+     * WGS-84 to 火星坐标系(GCJ-02)
      * @param lng
      * @param lat
      * @returns {*[]}
@@ -78,7 +78,7 @@
     }
 
     /**
-     * 火星坐标系 (GCJ-02) 到百度坐标系 (BD-09) 的转换
+     * 火星坐标系(GCJ-02) to 百度坐标系(BD-09) 的转换
      * @param lng
      * @param lat
      * @returns {*[]}
@@ -154,24 +154,28 @@
 
     }
 
-    function goto_gaode_map() {
-        var portal_info = get_portal_info();
-        var name = portal_info[0];
-        var position = portal_info[1];
-        var wgs_lat = position.split(",")[0];
-        var wgs_lng = position.split(",")[1];
-        var href = "http://uri.amap.com/marker?position=" + wgs_lng + "," + wgs_lat + "&name=" + name + "&coordinate=wgs84&callnative=0";
-        window.open(href, "OPR_GaodeMap");
-    }
-
     function goto_OSM() {
         var href = get_OSM_link();
         window.open(href, "map");
     }
 
+    //AutoNavi (高德地图)
+    function get_autonavi_link() {
+        var portal_info = get_portal_info();
+        var name = portal_info[0];
+        var position = portal_info[1];
+        var wgs_lat = position.split(",")[0];
+        var wgs_lng = position.split(",")[1];
+        return "http://uri.amap.com/marker?position=" + wgs_lng + "," + wgs_lat + "&name=" + name + "&coordinate=wgs84&callnative=0";
+    }
+
+    function goto_autonavi_map() {
+        href = get_autonavi_link();
+        window.open(href, "map");
+    }
+
     function get_intel_link() {
         var portal_info = get_portal_info();
-        // var name = portal_info[0];
         var position = portal_info[1];
         var wgs_lat = position.split(",")[0];
         var wgs_lng = position.split(",")[1];
@@ -192,7 +196,7 @@
         return "http://kitten-114.getforge.io/index.html#" + wgs_lng + "," + wgs_lat;
     }
 
-    function goto_Multimap() {
+    function goto_multimap() {
         var href = get_multimap_link();
         window.open(href, "map");
     }
@@ -221,7 +225,7 @@
 
     //Tencent Map Button
     var tencent_map_button = document.createElement("button");
-    var textnode_Tencent = document.createTextNode("Tencent Map");
+    var textnode_Tencent = document.createTextNode("Tencent");
     tencent_map_button.className += "button";
     tencent_map_button.onclick = goto_tencent_map;
     tencent_map_button.appendChild(textnode_Tencent);
@@ -229,19 +233,19 @@
 
     //Baidu Map Button
     var baidu_map_button = document.createElement("button");
-    var textnode_Baidu = document.createTextNode("Baidu Map");
+    var textnode_Baidu = document.createTextNode("Baidu");
     baidu_map_button.className += "button";
     baidu_map_button.onclick = goto_baidu_map;
     baidu_map_button.appendChild(textnode_Baidu);
     target.appendChild(baidu_map_button);
 
-    //Gaode Map Button
-    var gaode_map_button = document.createElement("button");
-    var textnode = document.createTextNode("Gaode Map");
-    gaode_map_button.className += "button";
-    gaode_map_button.onclick = goto_gaode_map;
-    gaode_map_button.appendChild(textnode);
-    target.appendChild(gaode_map_button);
+    //AutoNavi Button
+    var autonavi_button = document.createElement("button");
+    var textnode = document.createTextNode("AutoNavi");
+    autonavi_button.className += "button";
+    autonavi_button.onclick = goto_autonavi_map;
+    autonavi_button.appendChild(textnode);
+    target.appendChild(autonavi_button);
 
     //OSM Button
     var OSM_button = document.createElement("button");
@@ -251,7 +255,7 @@
     OSM_button.appendChild(textnode_OSM);
     target.appendChild(OSM_button);
 
-    //intel Button
+    //Intel Button
     var intel_button = document.createElement("button");
     var textnode_Intelmap = document.createTextNode("Intel");
     intel_button.className += "button";
@@ -261,24 +265,23 @@
 
     //Testing_multimaps Button
     var Multimap_button = document.createElement("button");
-    var textnode_Tencent_Baidu = document.createTextNode("Tencent+baidu");
+    var textnode_Tencent_Baidu = document.createTextNode("Tencent+Baidu");
     Multimap_button.className += "button";
-    Multimap_button.onclick = goto_Multimap;
+    Multimap_button.onclick = goto_multimap;
     Multimap_button.appendChild(textnode_Tencent_Baidu);
     target.appendChild(Multimap_button);
 
+    //margin
     target.appendChild(document.createElement("br"));
     target.appendChild(document.createElement("br"));
 
-    //Testing_multimaps Button
+    //Copy portal info to clipboard Button
     var clipboard_button = document.createElement("button");
     var textnode_copy = document.createTextNode("Copy to Clipboard");
     clipboard_button.className += "button";
     clipboard_button.className += " clipbtn";
-    // clipboard_button.onclick = goto_Multimap;
     clipboard_button.appendChild(textnode_copy);
     target.appendChild(clipboard_button);
-
 
     new Clipboard('.clipbtn', {
         text: function(trigger) {
