@@ -98,15 +98,17 @@
         var position = target.getElementsByTagName('a')[1].getAttribute("href");
         // var description = target.getElementsByTagName('a')[2].get
         name = /^\s*(.*)\s*$/.exec(name)[1];
-        if (position.indexOf("www.ingress.com/intel?ll=") >= 0) {
-            position = /=(.*)$/.exec(position)[1];
-            var end = position.indexOf("&z=20");
-            if (end >= 0) {
-                position = position.substring(0, end);
-            }
-        } else {
-            position = /@(.*)$/.exec(position)[1];
-        }
+        position = /@(.*)$/.exec(position)[1];
+        //TODO: to be verified
+        // if (position.indexOf("www.ingress.com/intel?ll=") >= 0) {
+        //     position = /=(.*)$/.exec(position)[1];
+        //     var end = position.indexOf("&z=20");
+        //     if (end >= 0) {
+        //         position = position.substring(0, end);
+        //     }
+        // } else {
+        //     position = /@(.*)$/.exec(position)[1];
+        // }
         return [name, position];
     }
 
@@ -182,7 +184,7 @@
         return "https://ingress.com/intel?z=14&ll=" + wgs_lat + "," + wgs_lng;
     }
 
-    function goto_intel() {
+    function goto_intel_map() {
         var href = get_intel_link();
         window.open(href, "map");
     }
@@ -241,10 +243,10 @@
 
     //AutoNavi Button
     var autonavi_button = document.createElement("button");
-    var textnode = document.createTextNode("AutoNavi");
+    var textnode_AutoNavi = document.createTextNode("AutoNavi");
     autonavi_button.className += "button";
     autonavi_button.onclick = goto_autonavi_map;
-    autonavi_button.appendChild(textnode);
+    autonavi_button.appendChild(textnode_AutoNavi);
     target.appendChild(autonavi_button);
 
     //OSM Button
@@ -254,14 +256,6 @@
     OSM_button.onclick = goto_OSM;
     OSM_button.appendChild(textnode_OSM);
     target.appendChild(OSM_button);
-
-    //Intel Button
-    var intel_button = document.createElement("button");
-    var textnode_Intelmap = document.createTextNode("Intel");
-    intel_button.className += "button";
-    intel_button.onclick = goto_intel;
-    intel_button.appendChild(textnode_Intelmap);
-    target.appendChild(intel_button);
 
     //Testing_multimaps Button
     var Multimap_button = document.createElement("button");
