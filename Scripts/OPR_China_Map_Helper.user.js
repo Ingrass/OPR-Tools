@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.4.2
+// @version      0.4.3
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    http://ethern.me/ingress/OPR_China_Map_Helper.user.js
@@ -152,8 +152,7 @@
         var position = portal_info[1];
         var wgs_lat = position.split(",")[0];
         var wgs_lng = position.split(",")[1];
-        return "http://www.openstreetmap.org/search?query=" + wgs_lat + "," + wgs_lng + "#map=16/" + wgs_lat + "/" + wgs_lng;
-
+        return "http://www.openstreetmap.org/?mlat=" + wgs_lat + "&mlon=" + wgs_lng + "#map=16/" + wgs_lat + "/" + wgs_lng;
     }
 
     function goto_OSM() {
