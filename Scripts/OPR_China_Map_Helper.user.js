@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.4.3
+// @version      0.4.4
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    http://ethern.me/ingress/OPR_China_Map_Helper.user.js
@@ -180,7 +180,7 @@
         var position = portal_info[1];
         var wgs_lat = position.split(",")[0];
         var wgs_lng = position.split(",")[1];
-        return "https://ingress.com/intel?z=14&ll=" + wgs_lat + "," + wgs_lng;
+        return "https://ingress.com/intel?z=16&ll=" + wgs_lat + "," + wgs_lng;
     }
 
     function goto_intel_map() {
