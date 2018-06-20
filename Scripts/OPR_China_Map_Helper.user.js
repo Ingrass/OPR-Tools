@@ -9,7 +9,7 @@
 // @author       Ethern Triomphe346 19John 记忆的残骸 stdssr
 // @include     https://opr.ingress.com/recon*
 // @grant        none
-// @require      https://unpkg.com/clipboard@2.0.0/dist/clipboard.min.js
+// @require      https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js
 // ==/UserScript==
 
 /*
