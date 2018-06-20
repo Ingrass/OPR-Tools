@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.5.0 (test)
+// @version      0.5.0
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
-// @updateURL    http://ethern.me/ingress/OPR_China_Map_Helper.user.js
-// @downloadURL  http://ethern.me/ingress/OPR_China_Map_Helper.user.js
+// @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
+// @downloadURL  https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
 // @description  Add some buttons for China map in OPR
 // @author       Ethern Triomphe346 19John 记忆的残骸 stdssr
-// @match        https://opr.ingress.com/recon
+// @include     https://opr.ingress.com/recon*
 // @grant        none
 // @require      https://unpkg.com/clipboard@2.0.0/dist/clipboard.min.js
 // ==/UserScript==
@@ -15,6 +15,10 @@
 /*
 v0.5
 - 支援審核 'Edit'
+	- 改寫結構
+	- GpsUtil 封裝成一個 function
+	- 可呈現多個 location 的地圖按鈕
+	- 對 title edit 加入 Google 和 百度 search 的按鈕
 */
 
 
@@ -120,7 +124,7 @@ LinkInfo.prototype. genButtons = function( isEdit=false ){
 		[ "高德", this.get_autonavi_link],
 		[ "OSM", this.get_OSM_link],
 		[ "百/腾", this.get_BaiduQQ_link],
-		//[ "百/腾/高", this.get_BaiduQQGaoDe_link],
+		//[ "百/腾/高", this.get_BaiduQQGaoDe_link], // 需要的請自行打開
 		//[ "百/腾/高/OSM+", this.get_BaiduQQGaoDeOSM_link],
 	];
 	
