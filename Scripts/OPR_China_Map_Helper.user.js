@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.5.0
+// @version      0.5.1
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
@@ -151,11 +151,11 @@ LinkInfo.prototype. genButtons = function( isEdit=false ){
 
 LinkInfo.prototype. get_tencent_link = function() {
 	var gcj = GpsUtil.wgs84togcj02(this.lng, this.lat);
-	return "http://map.qq.com/?type=marker&isopeninfowin=1&markertype=1&name=" + encodeURIComponent(this.title) + "&addr=+&pointy=" + gcj[1] + "&pointx=" + gcj[0];
+	return "http://map.qq.com/?type=marker&isopeninfowin=1&markertype=1&name=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&addr=+&pointy=" + gcj[1] + "&pointx=" + gcj[0];
 };
 
 LinkInfo.prototype.  get_baidu_link = function() {
-	return "http://api.map.baidu.com/marker?location=" + this.lat + "," + this.lng + "&title=" + encodeURIComponent(this.title) + "&content=Application&output=html&coord_type=wgs84";
+	return "http://api.map.baidu.com/marker?location=" + this.lat + "," + this.lng + "&title=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&content=Application&output=html&coord_type=wgs84";
 };
 
 LinkInfo.prototype.  get_OSM_link = function() {
@@ -163,7 +163,7 @@ LinkInfo.prototype.  get_OSM_link = function() {
 };
 
 LinkInfo.prototype.  get_autonavi_link = function() { //AutoNavi (高德地图)
-	return "http://uri.amap.com/marker?position=" + this.lng + "," + this.lat + "&name=" + encodeURIComponent(this.title) + "&coordinate=wgs84&callnative=0";
+	return "http://uri.amap.com/marker?position=" + this.lng + "," + this.lat + "&name=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&coordinate=wgs84&callnative=0";
 };
 
 LinkInfo.prototype.  get_intel_link = function() {
@@ -194,7 +194,7 @@ function get_copy_text() {
 	result += "Desc: " + PortalInfo.description + "\n";
 	result += "Addr: " + PortalInfo.streetAddress + "\n";
 	result += "Image: " + PortalInfo.imageUrl + "\n";
-	result += "Baidu Map link: " + linkInfo1.get_baidu_link() + "\n";
+	result += "Baidu Map: " + linkInfo1.get_baidu_link() + "\n";
 	return result;
 }
 
@@ -211,7 +211,7 @@ var timer_waitInfo = setInterval( function(){
 	// info OK
 	
 	PortalInfo.imageUrl = pageData.imageUrl;
-	PortalInfo.title =  pageData.title;
+	PortalInfo.title = pageData.title;
 	PortalInfo.description = pageData.description;
 	PortalInfo.streetAddress = pageData.streetAddress;
 	PortalInfo.lat = pageData.lat;
@@ -265,7 +265,7 @@ var timer_waitInfo = setInterval( function(){
 	// add "Search" to "edit" texts
 	document.querySelectorAll(".titleEditBox,h3.ng-binding").forEach( function( box ) {
 	  var p = box.querySelector( "p" ) || box;
-	  var searchTerm = encodeURIComponent( p.innerText );
+	  var searchTerm = encodeURIComponent( p.innerText ).replace(/\'/g,"%27");
 	  var span = document.createElement('span');
 	  span.style.cssFloat = "right";
 	  span.innerHTML =
