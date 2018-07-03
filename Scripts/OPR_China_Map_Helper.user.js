@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.5.1
+// @version      0.5.1.1
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
@@ -167,7 +167,7 @@ LinkInfo.prototype.  get_autonavi_link = function() { //AutoNavi (高德地图)
 };
 
 LinkInfo.prototype.  get_intel_link = function() {
-	return "https://ingress.com/intel?z=16&ll=" + this.lat + "," + this.lng +"&pll="+this.lat+","+this.lng;
+	return "https://www.ingress.com/intel?z=16&ll=" + this.lat + "," + this.lng +"&pll="+this.lat+","+this.lng;
 };
 
 LinkInfo.prototype.  get_GoogleMap_link = function() {
