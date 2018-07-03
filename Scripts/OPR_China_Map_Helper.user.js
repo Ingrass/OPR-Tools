@@ -167,7 +167,7 @@ LinkInfo.prototype.  get_autonavi_link = function() { //AutoNavi (高德地图)
 };
 
 LinkInfo.prototype.  get_intel_link = function() {
-	return "https://ingress.com/intel?z=16&ll=" + this.lat + "," + this.lng +"&pll="+this.lat+","+this.lng;
+	return "https://www.ingress.com/intel?z=16&ll=" + this.lat + "," + this.lng +"&pll="+this.lat+","+this.lng;
 };
 
 LinkInfo.prototype.  get_GoogleMap_link = function() {
