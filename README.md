@@ -11,8 +11,4 @@ Supports multiple locations in "edit".<br />
 ![readme](Readme/demo0.png)
 ![readme](Readme/demo_editTitle.png)
 ![readme](Readme/demo_editLocations.png)
-<<<<<<< HEAD
 ![readme](Readme/demo_multimap_and_multipoints.png)
-=======
-![readme](Readme/demo_multimap_and_multipoints.png)
->>>>>>> d4a45c8bdde702c5e5508a20bcb5d99b8283875d
