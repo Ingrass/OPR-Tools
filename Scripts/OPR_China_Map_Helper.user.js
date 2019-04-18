@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.5.1.2
+// @version      0.5.2
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
@@ -13,6 +13,9 @@
 // ==/UserScript==
 
 /*
+v0.5.2 18/4/2019
+brainstorming.azurewebsites.net 取代 kitten-114.getforge.io，kitten-114.getforge.io 將會停用
+
 v0.5.1.2
 intel地址更改
 
@@ -179,15 +182,15 @@ LinkInfo.prototype.  get_GoogleMap_link = function() {
 
 LinkInfo.prototype.  get_BaiduQQ_link = function() {
 	var s = this.otherLocations.map( x => x.lat + "," + x.lng ).join();
-	return "http://kitten-114.getforge.io/index.html#" + this.lat + "," + this.lng+"," +(s||"0");
+	return "http://brainstorming.azurewebsites.net/index.html#" + this.lat + "," + this.lng+"," +(s||"0");
 };
 LinkInfo.prototype.  get_BaiduQQGaoDe_link = function() {
 	var s = this.otherLocations.map( x => x.lat + "," + x.lng ).join();
-	return "http://kitten-114.getforge.io/index3.html#" + this.lat + "," + this.lng+"," +(s||"0");
+	return "http://brainstorming.azurewebsites.net/index3.html#" + this.lat + "," + this.lng+"," +(s||"0");
 };
 LinkInfo.prototype.  get_BaiduQQGaoDeOSM_link = function() {
 	var s = this.otherLocations.map( x => x.lat + "," + x.lng ).join();
-  return "http://kitten-114.getforge.io/index5.html#" + this.lat + "," + this.lng+"," +(s||"0");
+  return "http://brainstorming.azurewebsites.net/index5.html#" + this.lat + "," + this.lng+"," +(s||"0");
 };
 
 function get_copy_text() {
