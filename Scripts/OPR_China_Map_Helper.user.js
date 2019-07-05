@@ -76,19 +76,19 @@ LinkInfo.prototype. genButtons = function( isEdit=false ){
 
 LinkInfo.prototype. get_tencent_link = function() {
 	var gcj = PRCoords.wgs_gcj({ lat: this.lat, lon: this.lng});
-	return "http://map.qq.com/?type=marker&isopeninfowin=1&markertype=1&name=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&addr=+&pointy=" + gcj.lat + "&pointx=" + gcj.lon;
+	return "https://map.qq.com/?type=marker&isopeninfowin=1&markertype=1&name=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&addr=+&pointy=" + gcj.lat + "&pointx=" + gcj.lon;
 };
 
 LinkInfo.prototype.  get_baidu_link = function() {
-	return "http://api.map.baidu.com/marker?location=" + this.lat + "," + this.lng + "&title=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&content=Application&output=html&coord_type=wgs84";
+	return "https://api.map.baidu.com/marker?location=" + this.lat + "," + this.lng + "&title=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&content=Application&output=html&coord_type=wgs84";
 };
 
 LinkInfo.prototype.  get_OSM_link = function() {
-	return "http://www.openstreetmap.org/?mlat=" + this.lat + "&mlon=" + this.lng + "&zoom=16";
+	return "https://www.openstreetmap.org/?mlat=" + this.lat + "&mlon=" + this.lng + "&zoom=16";
 };
 
 LinkInfo.prototype.  get_autonavi_link = function() { //AutoNavi (高德地图)
-	return "http://uri.amap.com/marker?position=" + this.lng + "," + this.lat + "&name=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&coordinate=wgs84&callnative=0";
+	return "https://uri.amap.com/marker?position=" + this.lng + "," + this.lat + "&name=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&coordinate=wgs84&callnative=0";
 };
 
 LinkInfo.prototype.  get_intel_link = function() {
@@ -96,7 +96,7 @@ LinkInfo.prototype.  get_intel_link = function() {
 };
 
 LinkInfo.prototype.  get_GoogleMap_link = function() {
-	return "http://maps.google.com/?q=@" + this.lat + "," + this.lng;
+	return "https://maps.google.com/?q=@" + this.lat + "," + this.lng;
 };
 
 LinkInfo.prototype.  get_BaiduQQ_link = function() {
