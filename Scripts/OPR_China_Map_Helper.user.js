@@ -9,7 +9,7 @@
 // @author       Ethern Triomphe346 19John 记忆的残骸 stdssr
 // @include     https://opr.ingress.com/recon*
 // @grant        none
-// @require      https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js
+// @require      https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js
 // ==/UserScript==
 
 /*
@@ -276,11 +276,11 @@ var timer_waitInfo = setInterval( function(){
 	  span.style.cssFloat = "right";
 	  span.innerHTML =
 		"<a target='ChinaMapHelperSearch' href='https://www.baidu.com/s?wd="+searchTerm+"'>百度一下</a> | "
-		+"<a target='ChinaMapHelperSearch' href='http://www.google.com/search?q="+searchTerm+"'>Google search</a>"
+		+"<a target='ChinaMapHelperSearch' href='https://www.google.com/search?q="+searchTerm+"'>Google search</a>"
 	  p.appendChild( span );
 	});
 	
-	new Clipboard('.clipbtn', {
+	new ClipboardJS('.clipbtn', {
 	  text: function(trigger) {
 			return get_copy_text();
 	  }
