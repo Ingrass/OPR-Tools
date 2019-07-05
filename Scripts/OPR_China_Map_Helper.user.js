@@ -147,7 +147,7 @@ var timer_waitInfo = setInterval( function(){
 		var div = document.createElement('div');
 		div.className = "ChinaMapHelper";
 		div.innerHTML = linkInfo1.genButtons()
-			+"<a class='mapHelperButton button clipbtn'>Copy</a>";
+			+"<button class='mapHelperButton button clipbtn' type='button'>Copy</button>";
 		document.getElementById("descriptionDiv").appendChild(div);
 		
 	}else{ //subCtrl.reviewType==='EDIT'
@@ -179,8 +179,8 @@ var timer_waitInfo = setInterval( function(){
 	}
 	
 	var css = ' \
-		.ChinaMapHelper>a { display: inline-block; } \
-		.ChinaMapHelper>a:hover { color:white; } \
+		.ChinaMapHelper>a,button { display: inline-block; } \
+		.ChinaMapHelper>a:hover,button:hover { color:white; } \
 	';
 	var node = document.createElement('style');
 	node.type = 'text/css';
