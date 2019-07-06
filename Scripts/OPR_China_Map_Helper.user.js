@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.5.2
+// @version      0.5.3
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
 // @downloadURL  https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
 // @description  Add some buttons for China map in OPR
-// @author       Ethern Triomphe346 19John 记忆的残骸 stdssr
+// @author       Ethern Triomphe346 19John 记忆的残骸 stdssr convoi
 // @include     https://opr.ingress.com/recon*
 // @grant        none
 // @require      https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js
@@ -14,6 +14,12 @@
 // ==/UserScript==
 
 /*
+v0.5.3 6/7/2019
+- Require PRCoords instead of GpsUtil. Thanks to @shizhao mentioned that in #1.
+- Use https on external links whenever possible
+- Upgrade Clipboard to 2.0.4 and adapt to new usage signature
+- Fix underline on Copy button on hover
+
 v0.5.2 18/4/2019
 brainstorming.azurewebsites.net 取代 kitten-114.getforge.io，kitten-114.getforge.io 將會停用
 
@@ -22,10 +28,10 @@ intel地址更改
 
 v0.5
 - 支援審核 'Edit'
-	- 改寫結構
-	- GpsUtil 封裝成一個 function
-	- 可呈現多個 location 的地圖按鈕
-	- 對 title edit 加入 Google 和 百度 search 的按鈕
+- 改寫結構
+- GpsUtil 封裝成一個 function
+- 可呈現多個 location 的地圖按鈕
+- 對 title edit 加入 Google 和 百度 search 的按鈕
 */
 
 // Global
