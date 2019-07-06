@@ -9,7 +9,8 @@
 // @author       Ethern Triomphe346 19John 记忆的残骸 stdssr
 // @include     https://opr.ingress.com/recon*
 // @grant        none
-// @require      https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js
+// @require      https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js
+// @require      https://cdn.jsdelivr.net/npm/prcoords@1.0.0/js/PRCoords.js
 // ==/UserScript==
 
 /*
@@ -26,88 +27,6 @@ v0.5
 	- 可呈現多個 location 的地圖按鈕
 	- 對 title edit 加入 Google 和 百度 search 的按鈕
 */
-
-
-// GpsUtil
-var GpsUtil = (function(){
-	//constants
-	var x_PI = 3.14159265358979324 * 3000.0 / 180.0;
-	var PI = 3.1415926535897932384626;
-	var a = 6378245.0;
-	var ee = 0.00669342162296594323;
-	
-	var transform_lat = function(lng, lat) {
-	  var lat1 = +lat;
-	  var lng1 = +lng;
-	  var ret = -100.0 + 2.0 * lng1 + 3.0 * lat1 + 0.2 * lat1 * lat1 + 0.1 * lng1 * lat1 + 0.2 * Math.sqrt(Math.abs(lng1));
-	  ret += (20.0 * Math.sin(6.0 * lng1 * PI) + 20.0 * Math.sin(2.0 * lng1 * PI)) * 2.0 / 3.0;
-	  ret += (20.0 * Math.sin(lat1 * PI) + 40.0 * Math.sin(lat1 / 3.0 * PI)) * 2.0 / 3.0;
-	  ret += (160.0 * Math.sin(lat1 / 12.0 * PI) + 320 * Math.sin(lat1 * PI / 30.0)) * 2.0 / 3.0;
-	  return ret;
-	};
-
-	var transform_lng = function(lng, lat) {
-	  var lat1 = +lat;
-	  var lng1 = +lng;
-	  var ret = 300.0 + lng1 + 2.0 * lat1 + 0.1 * lng1 * lng1 + 0.1 * lng1 * lat1 + 0.1 * Math.sqrt(Math.abs(lng1));
-	  ret += (20.0 * Math.sin(6.0 * lng1 * PI) + 20.0 * Math.sin(2.0 * lng1 * PI)) * 2.0 / 3.0;
-	  ret += (20.0 * Math.sin(lng1 * PI) + 40.0 * Math.sin(lng1 / 3.0 * PI)) * 2.0 / 3.0;
-	  ret += (150.0 * Math.sin(lng1 / 12.0 * PI) + 300.0 * Math.sin(lng1 / 30.0 * PI)) * 2.0 / 3.0;
-	  return ret;
-	};
-
-	var out_of_china = function(lng, lat) {
-	  var lat1 = +lat;
-	  var lng1 = +lng;
-	  // 纬度3.86~53.55,经度73.66~135.05
-	  return !(lng1 > 73.66 && lng1 < 135.05 && lat1 > 3.86 && lat1 < 53.55);
-	};
-
-	/**
-	* WGS-84 to 火星坐标系(GCJ-02)
-	* @param lng
-	* @param lat
-	* @returns {*[]}
-	*/
-	this. wgs84togcj02 = function(lng, lat) {
-	  var lat1 = +lat;
-	  var lng1 = +lng;
-	  if (out_of_china(lng1, lat1)) {
-			return [lng1, lat1];
-	  } else {
-			var dlat = transform_lat(lng1 - 105.0, lat1 - 35.0);
-			var dlng = transform_lng(lng1 - 105.0, lat1 - 35.0);
-			var radlat = lat1 / 180.0 * PI;
-			var magic = Math.sin(radlat);
-			magic = 1 - ee * magic * magic;
-			var sqrtmagic = Math.sqrt(magic);
-			dlat = (dlat * 180.0) / ((a * (1 - ee)) / (magic * sqrtmagic) * PI);
-			dlng = (dlng * 180.0) / (a / sqrtmagic * Math.cos(radlat) * PI);
-			var mglat = lat1 + dlat;
-			var mglng = lng1 + dlng;
-			return [mglng, mglat];
-	  }
-	};
-
-	/**
-	* 火星坐标系(GCJ-02) to 百度坐标系(BD-09) 的转换
-	* @param lng
-	* @param lat
-	* @returns {*[]}
-	*/
-	this. gcj02tobd09 = function(lng, lat) {
-	  var lat1 = +lat;
-	  var lng1 = +lng;
-	  var z = Math.sqrt(lng1 * lng1 + lat1 * lat1) + 0.00002 * Math.sin(lat1 * x_PI);
-	  var theta = Math.atan2(lat1, lng1) + 0.000003 * Math.cos(lng1 * x_PI);
-	  var bd_lng = z * Math.cos(theta) + 0.0065;
-	  var bd_lat = z * Math.sin(theta) + 0.006;
-	  return [bd_lng, bd_lat];
-	};
-	
-	return this;
-})(); 
-// END GpsUtil
 
 // Global
 window.PortalInfo = {};
@@ -156,20 +75,20 @@ LinkInfo.prototype. genButtons = function( isEdit=false ){
 };
 
 LinkInfo.prototype. get_tencent_link = function() {
-	var gcj = GpsUtil.wgs84togcj02(this.lng, this.lat);
-	return "http://map.qq.com/?type=marker&isopeninfowin=1&markertype=1&name=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&addr=+&pointy=" + gcj[1] + "&pointx=" + gcj[0];
+	var gcj = PRCoords.wgs_gcj({ lat: this.lat, lon: this.lng});
+	return "https://map.qq.com/?type=marker&isopeninfowin=1&markertype=1&name=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&addr=+&pointy=" + gcj.lat + "&pointx=" + gcj.lon;
 };
 
 LinkInfo.prototype.  get_baidu_link = function() {
-	return "http://api.map.baidu.com/marker?location=" + this.lat + "," + this.lng + "&title=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&content=Application&output=html&coord_type=wgs84";
+	return "https://api.map.baidu.com/marker?location=" + this.lat + "," + this.lng + "&title=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&content=Application&output=html&coord_type=wgs84";
 };
 
 LinkInfo.prototype.  get_OSM_link = function() {
-	return "http://www.openstreetmap.org/?mlat=" + this.lat + "&mlon=" + this.lng + "&zoom=16";
+	return "https://www.openstreetmap.org/?mlat=" + this.lat + "&mlon=" + this.lng + "&zoom=16";
 };
 
 LinkInfo.prototype.  get_autonavi_link = function() { //AutoNavi (高德地图)
-	return "http://uri.amap.com/marker?position=" + this.lng + "," + this.lat + "&name=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&coordinate=wgs84&callnative=0";
+	return "https://uri.amap.com/marker?position=" + this.lng + "," + this.lat + "&name=" + encodeURIComponent(this.title).replace(/\'/g,"%27") + "&coordinate=wgs84&callnative=0";
 };
 
 LinkInfo.prototype.  get_intel_link = function() {
@@ -177,7 +96,7 @@ LinkInfo.prototype.  get_intel_link = function() {
 };
 
 LinkInfo.prototype.  get_GoogleMap_link = function() {
-	return "http://maps.google.com/?q=@" + this.lat + "," + this.lng;
+	return "https://maps.google.com/?q=@" + this.lat + "," + this.lng;
 };
 
 LinkInfo.prototype.  get_BaiduQQ_link = function() {
@@ -228,7 +147,7 @@ var timer_waitInfo = setInterval( function(){
 		var div = document.createElement('div');
 		div.className = "ChinaMapHelper";
 		div.innerHTML = linkInfo1.genButtons()
-			+"<a class='mapHelperButton button clipbtn'>Copy</a>";
+			+"<button class='mapHelperButton button clipbtn' type='button'>Copy</button>";
 		document.getElementById("descriptionDiv").appendChild(div);
 		
 	}else{ //subCtrl.reviewType==='EDIT'
@@ -260,8 +179,8 @@ var timer_waitInfo = setInterval( function(){
 	}
 	
 	var css = ' \
-		.ChinaMapHelper>a { display: inline-block; } \
-		.ChinaMapHelper>a:hover { color:white; } \
+		.ChinaMapHelper>a,button { display: inline-block; } \
+		.ChinaMapHelper>a:hover,button:hover { color:white; } \
 	';
 	var node = document.createElement('style');
 	node.type = 'text/css';
@@ -276,11 +195,11 @@ var timer_waitInfo = setInterval( function(){
 	  span.style.cssFloat = "right";
 	  span.innerHTML =
 		"<a target='ChinaMapHelperSearch' href='https://www.baidu.com/s?wd="+searchTerm+"'>百度一下</a> | "
-		+"<a target='ChinaMapHelperSearch' href='http://www.google.com/search?q="+searchTerm+"'>Google search</a>"
+		+"<a target='ChinaMapHelperSearch' href='https://www.google.com/search?q="+searchTerm+"'>Google search</a>"
 	  p.appendChild( span );
 	});
 	
-	new Clipboard('.clipbtn', {
+	new ClipboardJS('.clipbtn', {
 	  text: function(trigger) {
 			return get_copy_text();
 	  }
