@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.5.3
+// @version      0.5.4
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
@@ -14,6 +14,9 @@
 // ==/UserScript==
 
 /*
+v0.5.4 18/9/2019
+- brainstorming.azurewebsites.net uses https
+
 v0.5.3 6/7/2019
 - Require PRCoords instead of GpsUtil. Thanks to @shizhao mentioned that in #1.
 - Use https on external links whenever possible
@@ -107,15 +110,15 @@ LinkInfo.prototype.  get_GoogleMap_link = function() {
 
 LinkInfo.prototype.  get_BaiduQQ_link = function() {
 	var s = this.otherLocations.map( x => x.lat + "," + x.lng ).join();
-	return "http://brainstorming.azurewebsites.net/index.html#" + this.lat + "," + this.lng+"," +(s||"0");
+	return "https://brainstorming.azurewebsites.net/index.html#" + this.lat + "," + this.lng+"," +(s||"0");
 };
 LinkInfo.prototype.  get_BaiduQQGaoDe_link = function() {
 	var s = this.otherLocations.map( x => x.lat + "," + x.lng ).join();
-	return "http://brainstorming.azurewebsites.net/index3.html#" + this.lat + "," + this.lng+"," +(s||"0");
+	return "https://brainstorming.azurewebsites.net/index3.html#" + this.lat + "," + this.lng+"," +(s||"0");
 };
 LinkInfo.prototype.  get_BaiduQQGaoDeOSM_link = function() {
 	var s = this.otherLocations.map( x => x.lat + "," + x.lng ).join();
-  return "http://brainstorming.azurewebsites.net/index5.html#" + this.lat + "," + this.lng+"," +(s||"0");
+  return "https://brainstorming.azurewebsites.net/index5.html#" + this.lat + "," + this.lng+"," +(s||"0");
 };
 
 function get_copy_text() {
