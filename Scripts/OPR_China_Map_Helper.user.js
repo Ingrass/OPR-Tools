@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.5.5
+// @version      0.5.6
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
@@ -15,6 +15,9 @@
 // ==/UserScript==
 
 /*
+v0.5.6 11/10/2019
+- 修復新的 OPR "Edit" 的外部地圖輔助 buttons
+
 v0.5.5 11/10/2019
 - 适用新的 OPR 地址
 
@@ -161,6 +164,7 @@ var timer_waitInfo = setInterval( function(){
 		div.className = "ChinaMapHelper";
 		div.innerHTML = linkInfo1.genButtons()
 			+"<button class='mapHelperButton button clipbtn' type='button'>Copy</button>";
+		document.querySelector(".map-card .card__body").appendChild(div);
 		document.getElementById("descriptionDiv").appendChild(div);
 		
 	}else{ //subCtrl.reviewType==='EDIT'
