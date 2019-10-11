@@ -77,13 +77,13 @@ LinkInfo.prototype. genButtons = function( isEdit=false ){
 	
 	if( isEdit ){
 		for( var i=0; i<a_for_edit.length; i++ ){
-			s += "<a class='mapHelperButton button' target='mapHelper1' href='"
+			s += "<a class='mapHelperButton button button-secondary' target='mapHelper1' href='"
 				+a_for_edit[i][1].call(this)+"'>"+a_for_edit[i][0]+"</a>";
 		}
 	}
 	
 	for( var i=0; i<a.length; i++ ){
-		s += "<a class='mapHelperButton button' target='mapHelper1' href='"
+		s += "<a class='mapHelperButton button button-secondary' target='mapHelper1' href='"
 			+a[i][1].call(this)+"'>"+a[i][0]+"</a>";
 	}
 	
@@ -163,7 +163,7 @@ var timer_waitInfo = setInterval( function(){
 		var div = document.createElement('div');
 		div.className = "ChinaMapHelper";
 		div.innerHTML = linkInfo1.genButtons()
-			+"<button class='mapHelperButton button clipbtn' type='button'>Copy</button>";
+			+"<button class='mapHelperButton button button-secondary clipbtn' type='button'>Copy</button>";
 		document.querySelector(".map-card .card__body").appendChild(div);
 		document.getElementById("descriptionDiv").appendChild(div);
 		
@@ -195,10 +195,9 @@ var timer_waitInfo = setInterval( function(){
 		document.getElementById("WhatIsItController").parentNode.prepend(table);
 	}
 	
-	var css = ' \
-		.ChinaMapHelper>a,button { display: inline-block; } \
-		.ChinaMapHelper>a:hover,button:hover { color:white; } \
-	';
+	var css = [
+		'.ChinaMapHelper>a,button { display: inline-block; text-align: center; }'
+	].join("\n");
 	var node = document.createElement('style');
 	node.type = 'text/css';
 	node.appendChild(document.createTextNode(css));
