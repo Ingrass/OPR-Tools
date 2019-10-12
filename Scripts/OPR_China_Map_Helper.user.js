@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.5.7
+// @version      0.5.8
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
@@ -15,6 +15,9 @@
 // ==/UserScript==
 
 /*
+v0.5.8 12/10/2019
+- 增加对 Wayfarer 编辑的外部地图辅助 buttons (Gmap被移除，可使用地图左下Google标识跳转)
+
 v0.5.7 12/10/2019
 - 适配 Niantic Wayfarer 美术风格
 - 调整 button 位置
@@ -63,7 +66,7 @@ function LinkInfo( portalInfo){
 	this.otherLocations = portalInfo.otherLocations || [];
 }
 
-LinkInfo.prototype. genButtons = function( isEdit=false){
+LinkInfo.prototype. genButtons = function(){
 	var a = [
 		[ "intel", this.get_intel_link],
 		[ "百度", this.get_baidu_link],
@@ -75,20 +78,9 @@ LinkInfo.prototype. genButtons = function( isEdit=false){
 		//[ "百/腾/高/OSM+", this.get_BTAO_link],
 	];
 
-	var a_for_edit = [
-		[ "Gmap", this.get_GoogleMap_link],
-	];
-
 	var s = "";
 
-	if( isEdit){
-		for( var i=0; i<a_for_edit.length; i++){
-			s += "<a class='mapHelperButton button-secondary' target='mapHelper1' href='"
-				+a_for_edit[i][1].call(this)+"'>"+a_for_edit[i][0]+"</a>";
-		}
-	}
-
-	for( var i=0; i<a.length; i++){
+	for(var i=0; i<a.length; i++) {
 		s += "<a class='mapHelperButton button-secondary' target='mapHelper1' href='"
 			+a[i][1].call(this)+"'>"+a[i][0]+"</a>";
 	}
@@ -178,7 +170,6 @@ var timer_waitInfo = setInterval(function(){
 		div.className = "ChinaMapHelper";
 		div.innerHTML = linkInfo1.genButtons()
 			+"<button class='mapHelperButton button-secondary clipbtn' type='button'>Copy</button>";
-		// document.querySelector(".map-card .card__body").appendChild(div);
 		document.querySelector("#map-card .card__footer").prepend(div);
 
 	} else {
@@ -204,10 +195,10 @@ var timer_waitInfo = setInterval(function(){
 			var td = tr.insertCell();
 			var div = document.createElement('div');
 			div.className = "ChinaMapHelper";
-			div.innerHTML = linkInfo1.genButtons( true);
+			div.innerHTML = linkInfo1.genButtons();
 			td.appendChild(div);
 		}
-		document.getElementById("what-is-it-card").parentNode.prepend(table);
+		document.querySelector(".map-card.map-edit-card").appendChild(table);
 	}
 
 	var css = '.ChinaMapHelper{\
