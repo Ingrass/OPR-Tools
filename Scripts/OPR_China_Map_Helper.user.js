@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.5.8
+// @version      0.6
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
@@ -15,6 +15,9 @@
 // ==/UserScript==
 
 /*
+v0.6 12/10/2019
+- 修复 Title Edit 的搜索功能
+
 v0.5.8 12/10/2019
 - 增加对 Wayfarer 编辑的外部地图辅助 buttons (Gmap被移除，可使用地图左下Google标识跳转)
 
@@ -59,7 +62,7 @@ window.PortalInfo = {};
 var subCtrl;
 var pageData;
 
-function LinkInfo( portalInfo){
+function LinkInfo(portalInfo){
 	this.lng = portalInfo.lng;
 	this.lat = portalInfo.lat;
 	this.title = portalInfo.title;
@@ -118,19 +121,19 @@ LinkInfo.prototype.get_GoogleMap_link = function() {
 };
 
 LinkInfo.prototype.get_BaiduQQ_link = function() {
-	var s = this.otherLocations.map( x => x.lat + "," + x.lng).join();
+	var s = this.otherLocations.map(x => x.lat + "," + x.lng).join();
 	return "https://brainstorming.azurewebsites.net/index.html#" + this.lat + "," + this.lng+"," +(s||"0");
 };
 
 // Baidu, Tencent, AutoNavi
 LinkInfo.prototype.get_BTA_link = function() {
-	var s = this.otherLocations.map( x => x.lat + "," + x.lng).join();
+	var s = this.otherLocations.map(x => x.lat + "," + x.lng).join();
 	return "https://brainstorming.azurewebsites.net/index3.html#" + this.lat + "," + this.lng+"," +(s||"0");
 };
 
 // Baidu, Tencent, AutoNavi, OSM
 LinkInfo.prototype.get_BTAO_link = function() {
-	var s = this.otherLocations.map( x => x.lat + "," + x.lng).join();
+	var s = this.otherLocations.map(x => x.lat + "," + x.lng).join();
   return "https://brainstorming.azurewebsites.net/index5.html#" + this.lat + "," + this.lng+"," +(s||"0");
 };
 
@@ -179,13 +182,14 @@ var timer_waitInfo = setInterval(function(){
 		//pageData.descriptionEdits;
 
 		var table = document.createElement("TABLE");
+		table.id = "EditLocExMap";
 		var tr = table.insertRow();
 
 		for(var i=0; i<pageData.locationEdits.length; i++){
 			var p = pageData.locationEdits[i];
 			var otherLocations = pageData.locationEdits.slice(0);
 			otherLocations.splice(i,1);
-			window.linkInfo1 = new LinkInfo( {
+			window.linkInfo1 = new LinkInfo({
 				lng:p.lng,
 				lat:p.lat,
 				title: i.toString(),
@@ -215,14 +219,13 @@ var timer_waitInfo = setInterval(function(){
 	document.getElementsByTagName('head')[0].appendChild(node);
 
 	// add "Search" to "edit" texts
-	document.querySelectorAll("h1.title-description.ng-binding").forEach( function( box) {
-	  var p = box.querySelector( "p") || box;
-	  var searchTerm = encodeURIComponent( p.innerText).replace(/\'/g,"%27");
+	document.querySelectorAll(".titleEditBox.poi-edit-box .poi-edit-text").forEach(function(box) {
+	  var p = box.querySelector("p") || box;
+	  var searchTerm = encodeURIComponent(p.innerText).replace(/\'/g,"%27");
 	  var span = document.createElement('span');
 	  span.style.cssFloat = "right";
 	  span.innerHTML =
-		"<small><a target='ChinaMapHelperSearch' href='https://www.google.com/search?q="+searchTerm+"'>G</a> | "
-        +"<a target='ChinaMapHelperSearch' href='https://www.baidu.com/s?wd="+searchTerm+"'>B</a></small>"
+		"<a target='ChinaMapHelperSearch' href='https://www.google.com/search?q="+searchTerm+"'>🔍</a>"
 	  p.appendChild(span);
 	});
 
