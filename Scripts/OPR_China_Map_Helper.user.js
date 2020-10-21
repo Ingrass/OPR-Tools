@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.6
+// @version      0.7
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
@@ -15,6 +15,9 @@
 // ==/UserScript==
 
 /*
+v0.7 21/10/2020
+- 因應 Wayfarer變數名稱轉變 的修正
+
 v0.6 12/10/2019
 - 修复 Title Edit 的搜索功能
 
@@ -151,7 +154,7 @@ function get_copy_text() {
 var timer_waitInfo = setInterval(function(){
 	// 等待 subCtrl 能夠取得
 	try {
-		subCtrl = angular.element(document.getElementById('NewSubmissionController')).scope().subCtrl;
+		subCtrl = angular.element(document.getElementById('ReviewController')).scope().reviewCtrl;
 		pageData = subCtrl.pageData;
 		pageData.imageUrl; // test
 		clearInterval(timer_waitInfo);
