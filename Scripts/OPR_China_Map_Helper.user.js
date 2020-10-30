@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.7
+// @version      0.7.1
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
@@ -15,6 +15,9 @@
 // ==/UserScript==
 
 /*
+v0.7.1 31/10/2020
+- Edit文字的情況也可顯示附加按鈕
+
 v0.7 21/10/2020
 - 因應 Wayfarer變數名稱轉變 的修正
 
@@ -205,7 +208,7 @@ var timer_waitInfo = setInterval(function(){
 			div.innerHTML = linkInfo1.genButtons();
 			td.appendChild(div);
 		}
-		document.querySelector(".map-card.map-edit-card").appendChild(table);
+		document.querySelector(".known-information-card, .map-card.map-edit-card").appendChild(table);
 	}
 
 	var css = '.ChinaMapHelper{\
