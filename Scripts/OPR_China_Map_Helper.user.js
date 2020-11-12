@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.7.1
+// @version      0.7.2
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
@@ -15,7 +15,7 @@
 // ==/UserScript==
 
 /*
-v0.7.1 31/10/2020
+v0.7.2 31/10/2020
 - Edit文字的情況也可顯示附加按鈕
 
 v0.7 21/10/2020
@@ -83,8 +83,8 @@ LinkInfo.prototype. genButtons = function(){
 		[ "高德", this.get_autonavi_link],
 		[ "OSM", this.get_OSM_link],
 		[ "百/腾", this.get_BaiduQQ_link],
-		//[ "百/腾/高", this.get_BTA_link], // 需要的請自行打開
-		//[ "百/腾/高/OSM+", this.get_BTAO_link],
+		[ "百/腾/高", this.get_BTA_link],
+		[ "百/腾/高/OSM+", this.get_BTAO_link],
 	];
 
 	var s = "";
@@ -182,13 +182,12 @@ var timer_waitInfo = setInterval(function(){
 		document.querySelector("#map-card .card__footer").prepend(div);
 
 	} else {
-	    //subCtrl.reviewType==='EDIT'
+	    //subCtrl.reviewType==='EDIT' or 'PHOTO'
 		//pageData.titleEdits;
 		//pageData.locationEdits;
 		//pageData.descriptionEdits;
 
 		var table = document.createElement("TABLE");
-		table.id = "EditLocExMap";
 		var tr = table.insertRow();
 
 		for(var i=0; i<pageData.locationEdits.length; i++){
@@ -208,17 +207,26 @@ var timer_waitInfo = setInterval(function(){
 			div.innerHTML = linkInfo1.genButtons();
 			td.appendChild(div);
 		}
-		document.querySelector(".known-information-card, .map-card.map-edit-card").appendChild(table);
+
+		document.querySelectorAll(".map-card.map-edit-card .card__body, .known-information-card .card__body").forEach( (card)=>{
+			card.appendChild( table.cloneNode(true) );
+		});
+
 	}
 
-	var css = '.ChinaMapHelper{\
-		display: inline-block;}\
-		.ChinaMapHelper>.button-secondary {\
-		display: inline-block; \
-		min-width: auto; \
-		padding: 7px 12px; \
-		margin-right: 5px; \
-		margin-bottom: 5px;}';
+	var css = `
+	.ChinaMapHelper{
+		display: inline-block;
+	}
+	.ChinaMapHelper>.button-secondary {
+		display: inline-block; 
+		min-width: auto; 
+		padding: 7px 12px; 
+		margin-right: 5px; 
+		margin-top: 5px;
+		margin-bottom: 5px;
+		color:black;
+	}`;
 	var node = document.createElement('style');
 	node.type = 'text/css';
 	node.appendChild(document.createTextNode(css));
