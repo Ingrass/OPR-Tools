@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.7.2
+// @version      0.7.3
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
@@ -10,11 +10,13 @@
 // @include      https://opr.ingress.com/recon*
 // @include      https://wayfarer.nianticlabs.com/review*
 // @grant        none
-// @require      https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js
 // @require      https://cdn.jsdelivr.net/npm/prcoords@1.0.0/js/PRCoords.js
 // ==/UserScript==
 
 /*
+v0.7.3 16/12/2020
+- 拿掉 copy 功能；因功能雞肋且為它需要調用一個 lib
+
 v0.7.2 31/10/2020
 - Edit文字的情況也可顯示附加按鈕
 
@@ -143,17 +145,6 @@ LinkInfo.prototype.get_BTAO_link = function() {
   return "https://brainstorming.azurewebsites.net/index5.html#" + this.lat + "," + this.lng+"," +(s||"0");
 };
 
-function get_copy_text() {
-	var result = ""
-		+ "OPR Portal Candidate\n"
-		+ "Title: " + PortalInfo.title + "\n"
-		+ "Desc: " + PortalInfo.description + "\n"
-		+ "Addr: " + PortalInfo.streetAddress + "\n"
-		+ "Image: " + PortalInfo.imageUrl + "\n"
-		+ "Baidu Map: " + linkInfo1.get_baidu_link() + "\n";
-	return result;
-}
-
 var timer_waitInfo = setInterval(function(){
 	// 等待 subCtrl 能夠取得
 	try {
@@ -178,7 +169,6 @@ var timer_waitInfo = setInterval(function(){
 		var div = document.createElement('div');
 		div.className = "ChinaMapHelper";
 		div.innerHTML = linkInfo1.genButtons()
-			+"<button class='mapHelperButton button-secondary clipbtn' type='button'>Copy</button>";
 		document.querySelector("#map-card .card__footer").prepend(div);
 
 	} else {
@@ -228,7 +218,6 @@ var timer_waitInfo = setInterval(function(){
 		color:black;
 	}`;
 	var node = document.createElement('style');
-	node.type = 'text/css';
 	node.appendChild(document.createTextNode(css));
 	document.getElementsByTagName('head')[0].appendChild(node);
 
@@ -241,12 +230,6 @@ var timer_waitInfo = setInterval(function(){
 	  span.innerHTML =
 		"<a target='ChinaMapHelperSearch' href='https://www.google.com/search?q="+searchTerm+"'>🔍</a>"
 	  p.appendChild(span);
-	});
-
-	new ClipboardJS('.clipbtn', {
-	  text: function(trigger) {
-			return get_copy_text();
-	  }
 	});
 
 }, 99);
