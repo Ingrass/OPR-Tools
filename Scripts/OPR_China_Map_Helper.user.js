@@ -1,19 +1,21 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.7.3
+// @version      0.8
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
-// @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
+// @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.meta.js
 // @downloadURL  https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
 // @description  Add some buttons for China map in OPR
-// @author       Ethern Triomphe346 19John 记忆的残骸 stdssr convoi
-// @include      https://opr.ingress.com/recon*
+// @author       Ethern Triomphe346 lokpro 记忆的残骸 stdssr convoi
 // @include      https://wayfarer.nianticlabs.com/review*
 // @grant        none
 // @require      https://cdn.jsdelivr.net/npm/prcoords@1.0.0/js/PRCoords.js
 // ==/UserScript==
 
 /*
+v0.8 21/12/2020
+- 可顯示/隱藏按鈕
+
 v0.7.3 16/12/2020
 - 拿掉 copy 功能；因功能雞肋且為它需要調用一個 lib
 
@@ -64,11 +66,68 @@ v0.5
 - 對 title edit 加入 Google 和 百度 search 的按鈕
 */
 
-// Global
-window.PortalInfo = {};
-//window.linkInfo1;
-var subCtrl;
-var pageData;
+window.ChinaMapHelper = {
+	BUTTONS: [
+		{ name:"intel", fn:"get_intel_link" },
+		{ name:"百度", fn:"get_baidu_link" },
+		{ name:"腾讯", fn:"get_tencent_link" },
+		{ name:"高德", fn:"get_autonavi_link" },
+		{ name:"OSM", fn:"get_OSM_link" },
+		{ name:"百/腾", fn:"get_BaiduQQ_link" },
+		{ name:"百/腾/高", fn:"get_BTA_link" },
+		{ name:"百/腾/高/OSM+", fn:"get_BTAO_link" },
+	],
+
+	loadSettings(){
+		let defaultVal = {buttonsToShow:["intel","百度","腾讯","高德","OSM","百/腾"]};
+		let settings = localStorage.getItem( "OPRChinaMapHelperSettings" );
+		if( settings ){
+			this.settings = JSON.parse(settings);
+		}else{
+			this.settings =  defaultVal;
+		}
+	},
+
+	saveSettings(){
+		localStorage.setItem( "OPRChinaMapHelperSettings", JSON.stringify(this.settings) );
+	},
+	
+	updateButtonsDisplay(){
+		let buttonsToShow = this.settings.buttonsToShow;
+		var css = "";
+	
+		this.BUTTONS.forEach( (b,i)=>{
+			let show = buttonsToShow.includes( b.name );
+	
+			css += `
+.ChinaMapHelper .mapHelperButton:nth-child(${i+2}) {
+	display: ${show?"inline-block":"none"};
+}
+
+.mapHelperEditMode	.ChinaMapHelper .mapHelperButton:nth-child(${i+2}) .checkbox:after {
+	content: "${show?"☑":"☐"}";
+}
+			`;
+		});
+	
+		var node = document.createElement('style');
+		node.appendChild(document.createTextNode(css));
+		document.getElementsByTagName('head')[0].appendChild(node);
+	},
+
+	toggleButtonShow( index ){
+		let name = this.BUTTONS[index].name;
+		let buttonsToShow = this.settings.buttonsToShow;
+
+		if( buttonsToShow.includes( name ) ){
+			this.settings.buttonsToShow = buttonsToShow.filter( n=>n!=name );
+		}else{
+			buttonsToShow.push( name );
+		}
+		this.saveSettings();
+		this.updateButtonsDisplay();
+	},
+};
 
 function LinkInfo(portalInfo){
 	this.lng = portalInfo.lng;
@@ -78,25 +137,22 @@ function LinkInfo(portalInfo){
 }
 
 LinkInfo.prototype. genButtons = function(){
-	var a = [
-		[ "intel", this.get_intel_link],
-		[ "百度", this.get_baidu_link],
-		[ "腾讯", this.get_tencent_link],
-		[ "高德", this.get_autonavi_link],
-		[ "OSM", this.get_OSM_link],
-		[ "百/腾", this.get_BaiduQQ_link],
-		[ "百/腾/高", this.get_BTA_link],
-		[ "百/腾/高/OSM+", this.get_BTAO_link],
-	];
+	let html = `<a class='button-secondary button-settings'
+		onclick='document.body.classList.toggle("mapHelperEditMode");'
+		>+</a>`;
 
-	var s = "";
+	ChinaMapHelper.BUTTONS.forEach( (b,i)=>{
+		html += `<a class='mapHelperButton button-secondary button-map' target='mapHelper1'	href='${this[b.fn]()}'>
+			<span class="checkbox" onclick="
+				event.stopPropagation();
+				event.preventDefault();
+				window.ChinaMapHelper.toggleButtonShow(${i});
+				return false;
+				"></span>
+		${b.name}</a>`;
+	} );
 
-	for(var i=0; i<a.length; i++) {
-		s += "<a class='mapHelperButton button-secondary' target='mapHelper1' href='"
-			+a[i][1].call(this)+"'>"+a[i][0]+"</a>";
-	}
-
-	return s;
+	return html;
 };
 
 LinkInfo.prototype.get_tencent_link = function() {
@@ -147,6 +203,7 @@ LinkInfo.prototype.get_BTAO_link = function() {
 
 var timer_waitInfo = setInterval(function(){
 	// 等待 subCtrl 能夠取得
+	let subCtrl, pageData;
 	try {
 		subCtrl = angular.element(document.getElementById('ReviewController')).scope().reviewCtrl;
 		pageData = subCtrl.pageData;
@@ -157,34 +214,30 @@ var timer_waitInfo = setInterval(function(){
 	}
 	// info OK
 
-	PortalInfo.imageUrl = pageData.imageUrl;
-	PortalInfo.title = pageData.title;
-	PortalInfo.description = pageData.description;
-	PortalInfo.streetAddress = pageData.streetAddress;
-	PortalInfo.lat = pageData.lat;
-	PortalInfo.lng = pageData.lng;
-
 	if(subCtrl.reviewType==='NEW') {
-		window.linkInfo1 = new LinkInfo(PortalInfo);
+		let linkInfo1 = new LinkInfo(pageData);
 		var div = document.createElement('div');
 		div.className = "ChinaMapHelper";
-		div.innerHTML = linkInfo1.genButtons()
+		div.innerHTML = linkInfo1.genButtons();
 		document.querySelector("#map-card .card__footer").prepend(div);
+
+		document.querySelector("#descriptionDiv").prepend( div.cloneNode(true) );
 
 	} else {
 	    //subCtrl.reviewType==='EDIT' or 'PHOTO'
 		//pageData.titleEdits;
 		//pageData.locationEdits;
 		//pageData.descriptionEdits;
-
+		
 		var table = document.createElement("TABLE");
+		table.classList.add( "multiPointsTable" );
 		var tr = table.insertRow();
 
 		for(var i=0; i<pageData.locationEdits.length; i++){
 			var p = pageData.locationEdits[i];
 			var otherLocations = pageData.locationEdits.slice(0);
 			otherLocations.splice(i,1);
-			window.linkInfo1 = new LinkInfo({
+			let linkInfo1 = new LinkInfo({
 				lng:p.lng,
 				lat:p.lat,
 				title: i.toString(),
@@ -204,19 +257,51 @@ var timer_waitInfo = setInterval(function(){
 
 	}
 
+	ChinaMapHelper.loadSettings();
+	ChinaMapHelper.updateButtonsDisplay();
+
 	var css = `
 	.ChinaMapHelper{
 		display: inline-block;
 	}
-	.ChinaMapHelper>.button-secondary {
+	.ChinaMapHelper .mapHelperButton,
+	.ChinaMapHelper .button-settings{
 		display: inline-block; 
 		min-width: auto; 
-		padding: 7px 12px; 
+		padding: 7px 6px; 
 		margin-right: 5px; 
 		margin-top: 5px;
 		margin-bottom: 5px;
 		color:black;
-	}`;
+	}
+	
+	.mapHelperEditMode .ChinaMapHelper .mapHelperButton{
+		display: inline-block !important;
+		padding-left: 0px;
+	}
+
+	.mapHelperEditMode .ChinaMapHelper .mapHelperButton{
+		display: inline-block !important;
+		padding-left: 0px;
+	}
+
+	.ChinaMapHelper .checkbox{
+		display: none;
+	}
+	.mapHelperEditMode .ChinaMapHelper .checkbox{
+		display: inline;
+	}
+
+	.mapHelperEditMode .ChinaMapHelper .checkbox:after {
+		padding: 0.7em;
+		margin: 0;
+		background-color: #00000033;
+	}
+
+	.multiPointsTable{
+		width: 100%;
+	}
+	`;
 	var node = document.createElement('style');
 	node.appendChild(document.createTextNode(css));
 	document.getElementsByTagName('head')[0].appendChild(node);
