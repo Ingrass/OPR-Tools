@@ -9,6 +9,8 @@ Supports multiple locations in "edit".<br />
 #### script url: https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
 
 ![readme](Readme/demo0.png)
+![readme](Readme/demo1.png)
+![readme](Readme/demo2.png)
 ![readme](Readme/demo_editTitle.png)
 ![readme](Readme/demo_editLocations.png)
 ![readme](Readme/demo_multimap_and_multipoints.png)
