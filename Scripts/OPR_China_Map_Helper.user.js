@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.8
+// @version      0.9
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.meta.js
@@ -13,6 +13,9 @@
 // ==/UserScript==
 
 /*
+v0.9 10/5/2021
+- 適用審PHOTO的情況
+
 v0.8 21/12/2020
 - 可顯示/隱藏按鈕
 
@@ -20,7 +23,7 @@ v0.7.3 16/12/2020
 - 拿掉 copy 功能；因功能雞肋且為它需要調用一個 lib
 
 v0.7.2 31/10/2020
-- Edit文字的情況也可顯示附加按鈕
+- 適用Edit文字的情況
 
 v0.7 21/10/2020
 - 因應 Wayfarer變數名稱轉變 的修正
@@ -214,17 +217,21 @@ var timer_waitInfo = setInterval(function(){
 	}
 	// info OK
 
-	if(subCtrl.reviewType==='NEW') {
+	if( ["NEW","PHOTO"].includes(subCtrl.reviewType) ) {
 		let linkInfo1 = new LinkInfo(pageData);
 		var div = document.createElement('div');
 		div.className = "ChinaMapHelper";
 		div.innerHTML = linkInfo1.genButtons();
-		document.querySelector("#map-card .card__footer").prepend(div);
 
-		document.querySelector("#descriptionDiv").prepend( div.cloneNode(true) );
+		if( subCtrl.reviewType=="NEW"){
+			document.querySelector("#map-card .card__footer").prepend(div);
+			document.querySelector("#descriptionDiv").prepend( div.cloneNode(true) );
+		}else{
+			document.querySelector(".review-photo-upload").prepend(div);
+		}
 
 	} else {
-	    //subCtrl.reviewType==='EDIT' or 'PHOTO'
+	  //subCtrl.reviewType==='EDIT'
 		//pageData.titleEdits;
 		//pageData.locationEdits;
 		//pageData.descriptionEdits;
