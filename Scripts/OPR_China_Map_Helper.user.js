@@ -208,20 +208,21 @@ LinkInfo.prototype.get_BTAO_link = function() {
 };
 
 var timer_waitInfo = setInterval(function(){
+	if( document.querySelector(".mapHelperButton") ) return;
+
 	// 先用笨的方法取得 lat, lng, 先推出能用再想
 	let linkInfo1;
 	try {
 		linkInfo1 = new LinkInfo();
 		[ , linkInfo1.lat, linkInfo1.lng]
 			= document.querySelector("a[href*='maps?ll=']").href.match( /ll=([0-9\.]+),([0-9\.]+)&/ );
-		clearInterval(timer_waitInfo);
 	} catch(e) {
-		console.log( e );
+		// console.log( e );
 		return;
 	}
 	// info OK
 
-	console.log( linkInfo1 );
+	// console.log( linkInfo1 );
 	var div = document.createElement('div');
 	div.className = "ChinaMapHelper";
 	div.innerHTML = linkInfo1.genButtons();
@@ -297,4 +298,4 @@ var timer_waitInfo = setInterval(function(){
 	  p.appendChild(span);
 	});
 
-}, 999);
+}, 1999);
