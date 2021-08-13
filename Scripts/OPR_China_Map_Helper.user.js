@@ -1,18 +1,21 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      0.9
+// @version      1.0
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.meta.js
 // @downloadURL  https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
 // @description  Add some buttons for China map in OPR
 // @author       Ethern Triomphe346 lokpro 记忆的残骸 stdssr convoi
-// @include      https://wayfarer.nianticlabs.com/review*
+// @include      https://wayfarer.nianticlabs.com/*review*
 // @grant        none
 // @require      https://cdn.jsdelivr.net/npm/prcoords@1.0.0/js/PRCoords.js
 // ==/UserScript==
 
 /*
+v1.0 13/8/2021
+- 適用最新版 OPR(Wayfarer)
+
 v0.9 10/5/2021
 - 適用審PHOTO的情況
 
@@ -102,7 +105,7 @@ window.ChinaMapHelper = {
 		this.BUTTONS.forEach( (b,i)=>{
 			let show = buttonsToShow.includes( b.name );
 	
-			css += `
+			css += /*css*/`
 .ChinaMapHelper .mapHelperButton:nth-child(${i+2}) {
 	display: ${show?"inline-block":"none"};
 }
@@ -132,20 +135,20 @@ window.ChinaMapHelper = {
 	},
 };
 
-function LinkInfo(portalInfo){
+function LinkInfo(portalInfo={}){
 	this.lng = portalInfo.lng;
 	this.lat = portalInfo.lat;
-	this.title = portalInfo.title;
+	this.title = portalInfo.title || "";
 	this.otherLocations = portalInfo.otherLocations || [];
 }
 
 LinkInfo.prototype. genButtons = function(){
-	let html = `<a class='button-secondary button-settings'
+	let html = /*html*/`<a class='wf-button button-settings'
 		onclick='document.body.classList.toggle("mapHelperEditMode");'
 		>+</a>`;
 
 	ChinaMapHelper.BUTTONS.forEach( (b,i)=>{
-		html += `<a class='mapHelperButton button-secondary button-map' target='mapHelper1'	href='${this[b.fn]()}'>
+		html += /*html*/`<a class='mapHelperButton wf-button button-map' target='mapHelper1'	href='${this[b.fn]()}'>
 			<span class="checkbox" onclick="
 				event.stopPropagation();
 				event.preventDefault();
@@ -205,69 +208,39 @@ LinkInfo.prototype.get_BTAO_link = function() {
 };
 
 var timer_waitInfo = setInterval(function(){
-	// 等待 subCtrl 能夠取得
-	let subCtrl, pageData;
+	// 先用笨的方法取得 lat, lng, 先推出能用再想
+	let linkInfo1;
 	try {
-		subCtrl = angular.element(document.getElementById('ReviewController')).scope().reviewCtrl;
-		pageData = subCtrl.pageData;
-		pageData.imageUrl; // test
+		linkInfo1 = new LinkInfo();
+		[ , linkInfo1.lat, linkInfo1.lng]
+			= document.querySelector("a[href*='maps?ll=']").href.match( /ll=([0-9\.]+),([0-9\.]+)&/ );
 		clearInterval(timer_waitInfo);
 	} catch(e) {
+		console.log( e );
 		return;
 	}
 	// info OK
 
-	if( ["NEW","PHOTO"].includes(subCtrl.reviewType) ) {
-		let linkInfo1 = new LinkInfo(pageData);
-		var div = document.createElement('div');
-		div.className = "ChinaMapHelper";
-		div.innerHTML = linkInfo1.genButtons();
+	console.log( linkInfo1 );
+	var div = document.createElement('div');
+	div.className = "ChinaMapHelper";
+	div.innerHTML = linkInfo1.genButtons();
 
-		if( subCtrl.reviewType=="NEW"){
-			document.querySelector("#map-card .card__footer").prepend(div);
-			document.querySelector("#descriptionDiv").prepend( div.cloneNode(true) );
-		}else{
-			document.querySelector(".review-photo-upload").prepend(div);
-		}
-
-	} else {
-	  //subCtrl.reviewType==='EDIT'
-		//pageData.titleEdits;
-		//pageData.locationEdits;
-		//pageData.descriptionEdits;
-		
-		var table = document.createElement("TABLE");
-		table.classList.add( "multiPointsTable" );
-		var tr = table.insertRow();
-
-		for(var i=0; i<pageData.locationEdits.length; i++){
-			var p = pageData.locationEdits[i];
-			var otherLocations = pageData.locationEdits.slice(0);
-			otherLocations.splice(i,1);
-			let linkInfo1 = new LinkInfo({
-				lng:p.lng,
-				lat:p.lat,
-				title: i.toString(),
-				otherLocations: otherLocations,
-			});
-
-			var td = tr.insertCell();
-			var div = document.createElement('div');
-			div.className = "ChinaMapHelper";
-			div.innerHTML = linkInfo1.genButtons();
-			td.appendChild(div);
-		}
-
-		document.querySelectorAll(".map-card.map-edit-card .card__body, .known-information-card .card__body").forEach( (card)=>{
-			card.appendChild( table.cloneNode(true) );
-		});
-
-	}
+	// 要加入在這麼多地方是因為：方便不同習慣的人、手機版比較好找、有些是審PHOTO/EDIT時特有
+	document.querySelectorAll( [
+		"app-should-be-wayspot .wf-review-card",
+		"#location-accuracy-card .wf-review-card__footer",
+		"#check-duplicates-card",
+		"#title-description-card",
+		".review-photo__info", // PHOTO
+	].join() ).forEach( node=>{
+		node.appendChild( div.cloneNode(true) );
+	} );
 
 	ChinaMapHelper.loadSettings();
 	ChinaMapHelper.updateButtonsDisplay();
 
-	var css = `
+	var css = /*css*/`
 	.ChinaMapHelper{
 		display: inline-block;
 	}
@@ -324,4 +297,4 @@ var timer_waitInfo = setInterval(function(){
 	  p.appendChild(span);
 	});
 
-}, 99);
+}, 999);
