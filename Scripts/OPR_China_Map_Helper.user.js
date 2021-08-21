@@ -1,20 +1,21 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      1.1
+// @version      1.2
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.meta.js
 // @downloadURL  https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
 // @description  Add some buttons for China map in OPR
 // @author       Ethern Triomphe346 lokpro 记忆的残骸 stdssr convoi
-// @include      https://wayfarer.nianticlabs.com/*review*
+// @include      https://wayfarer.nianticlabs.com/*
 // @grant        none
 // @require      https://cdn.jsdelivr.net/npm/prcoords@1.0.0/js/PRCoords.js
 // ==/UserScript==
 
 /*
-v1.1
+v1.2
 - 修復 "審EDIT" 的 tools 顯示
+- 修改 @include 為 *(全站)，因為新網站是不會跳頁的，必須在任何一個子網址進入都要載入 script
 
 v1.0 13/8/2021
 - 適用最新版 OPR(Wayfarer)
@@ -74,6 +75,8 @@ v0.5
 - 可呈現多個 location 的地圖按鈕
 - 對 title edit 加入 Google 和 百度 search 的按鈕
 */
+
+(function(){
 
 window.ChinaMapHelper = {
 	BUTTONS: [
@@ -211,6 +214,7 @@ LinkInfo.prototype.get_BTAO_link = function() {
 };
 
 var timer_waitInfo = setInterval(function(){
+	if( ! location.href.includes("new/review") ) return;
 	if( document.querySelector(".mapHelperButton") ) return;
 
 	// 先用笨的方法取得 lat, lng, 先推出能用再想
@@ -303,3 +307,5 @@ var timer_waitInfo = setInterval(function(){
 	});
 
 }, 1999);
+
+})();
