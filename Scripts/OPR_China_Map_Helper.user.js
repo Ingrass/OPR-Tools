@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      1.0
+// @version      1.1
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.meta.js
@@ -13,6 +13,9 @@
 // ==/UserScript==
 
 /*
+v1.1
+- 修復 "審EDIT" 的 tools 顯示
+
 v1.0 13/8/2021
 - 適用最新版 OPR(Wayfarer)
 
@@ -234,6 +237,7 @@ var timer_waitInfo = setInterval(function(){
 		"#check-duplicates-card",
 		"#title-description-card",
 		".review-photo__info", // PHOTO
+		".review-edit-info>.ng-star-inserted", // EDIT
 	].join() ).forEach( node=>{
 		node.appendChild( div.cloneNode(true) );
 	} );
