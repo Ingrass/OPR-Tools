@@ -1,4 +1,4 @@
-## OPR中国地图工具 / OPR China Map Helper 
+# OPR中国地图工具 / OPR China Map Helper 
 
 连到各种地图，包括百度、腾讯、高德等。<br />
 支持审核 "edit"，支持多个地点同时查询。<br />
@@ -6,6 +6,20 @@ Provides links to other maps, especially for maps useful in China.<br />
 Supports multiple locations in "edit".<br />
 
 #### script url: https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
+
+# 書籤小程式 bookmarklet (iOS Safari 可使用)
+執行內容是載入 https://cdn.jsdelivr.net/gh/Ingrass/OPR-Tools/Scripts/OPR_China_Map_Helper.user.min.js , 等同上述 script 的 min(壓縮)版
+
+`
+javascript:(function(F,i,r,e,k,u,I,E){if(F.getElementById(k))return;E=F[i+'NS']&&F.documentElement.namespaceURI;E=E?F[i+'NS'](E,'script'):F[i]('script');E[r]('id',k);E[r]('src',I);E[r](k,u);(F[e]('head')[0]||F[e]('body')[0]).appendChild(E);})(document,'createElement','setAttribute','getElementsByTagName','MyScript','4','https://cdn.jsdelivr.net/gh/Ingrass/OPR-Tools/Scripts/OPR_China_Map_Helper.user.min.js?'+Math.floor(Date.now()/100000000));
+`
+
+#### 安裝方法可參考:
+- https://sspai.com/post/26196
+- https://kknews.cc/tech/69p22kl.html
+
+
+---
 
 ![readme](Readme/demo0.png)
 ![readme](Readme/demo1.png)
