@@ -8,10 +8,10 @@ Supports multiple locations in "edit".<br />
 #### script url: https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
 
 # 書籤小程式 bookmarklet (iOS Safari 可使用)
-執行內容是載入 https://cdn.jsdelivr.net/gh/Ingrass/OPR-Tools/Scripts/OPR_China_Map_Helper.user.min.js , 等同上述 script 的 min(壓縮)版
+執行內容是載入上述 script
 
 `
-javascript:(function(F,i,r,e,k,u,I,E){if(F.getElementById(k))return;E=F[i+'NS']&&F.documentElement.namespaceURI;E=E?F[i+'NS'](E,'script'):F[i]('script');E[r]('id',k);E[r]('src',I);E[r](k,u);(F[e]('head')[0]||F[e]('body')[0]).appendChild(E);})(document,'createElement','setAttribute','getElementsByTagName','MyScript','4','https://cdn.jsdelivr.net/gh/Ingrass/OPR-Tools/Scripts/OPR_China_Map_Helper.user.min.js?'+Math.floor(Date.now()/100000000));
+javascript:(function(F,i,r,e,k,u,I,E){if(F.getElementById(k))return;E=F[i+'NS']&&F.documentElement.namespaceURI;E=E?F[i+'NS'](E,'script'):F[i]('script');E[r]('id',k);E[r]('src',I);E[r](k,u);(F[e]('head')[0]||F[e]('body')[0]).appendChild(E);})(document,'createElement','setAttribute','getElementsByTagName','MyScript','4','https://cdn.jsdelivr.net/gh/Ingrass/OPR-Tools/Scripts/OPR_China_Map_Helper.user.js?'+Math.floor(Date.now()/100000000));
 `
 
 #### 安裝方法可參考:
