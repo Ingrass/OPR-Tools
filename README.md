@@ -7,7 +7,7 @@ Supports multiple locations in "edit".<br />
 
 #### script url: https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.user.js
 
-# 書籤小程式 bookmarklet (iOS Safari 可使用)
+# 書籤小程式 bookmarklet (iOS Safari/Android Chrome等 可使用)
 執行內容是載入上述 script
 
 `
@@ -18,6 +18,8 @@ javascript:(function(F,i,r,e,k,u,I,E){if(F.getElementById(k))return;E=F[i+'NS']&
 - https://sspai.com/post/26196
 - https://kknews.cc/tech/69p22kl.html
 
+#### Android上如何用 userscript
+https://telegra.ph/Android上如何用-userscript-07-12
 
 ---
 
