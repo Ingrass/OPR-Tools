@@ -9,7 +9,7 @@
 // @author       Ethern Triomphe346 lokpro 记忆的残骸 stdssr convoi
 // @include      https://wayfarer.nianticlabs.com/*
 // @grant        none
-// @require      https://cdn.jsdelivr.net/npm/prcoords@1.0.0/js/PRCoords.js
+// @require      https://cdn.jsdelivr.net/npm/prcoords@1.0.5/js/PRCoords.min.js
 // ==/UserScript==
 
 /*
@@ -213,99 +213,118 @@ LinkInfo.prototype.get_BTAO_link = function() {
   return "https://brainstorming.azurewebsites.net/index5.html#" + this.lat + "," + this.lng+"," +(s||"0");
 };
 
-var timer_waitInfo = setInterval(function(){
-	if( ! location.href.includes("new/review") ) return;
-	if( document.querySelector(".mapHelperButton") ) return;
-
-	// 先用笨的方法取得 lat, lng, 先推出能用再想
-	let linkInfo1;
-	try {
-		linkInfo1 = new LinkInfo();
-		[ , linkInfo1.lat, linkInfo1.lng]
-			= document.querySelector("a[href*='maps?ll=']").href.match( /ll=([0-9\.]+),([0-9\.]+)&/ );
-	} catch(e) {
-		// console.log( e );
-		return;
-	}
-	// info OK
-
-	// console.log( linkInfo1 );
-	var div = document.createElement('div');
-	div.className = "ChinaMapHelper";
-	div.innerHTML = linkInfo1.genButtons();
-
-	// 要加入在這麼多地方是因為：方便不同習慣的人、手機版比較好找、有些是審PHOTO/EDIT時特有
-	document.querySelectorAll( [
-		"app-should-be-wayspot .wf-review-card",
-		"#location-accuracy-card .wf-review-card__footer",
-		"#check-duplicates-card",
-		"#title-description-card",
-		".review-photo__info", // PHOTO
-		".review-edit-info>.ng-star-inserted", // EDIT
-	].join() ).forEach( node=>{
-		node.appendChild( div.cloneNode(true) );
-	} );
-
-	ChinaMapHelper.loadSettings();
-	ChinaMapHelper.updateButtonsDisplay();
-
-	var css = /*css*/`
-	.ChinaMapHelper{
-		display: inline-block;
-	}
-	.ChinaMapHelper .mapHelperButton,
-	.ChinaMapHelper .button-settings{
-		display: inline-block; 
-		min-width: auto; 
-		padding: 7px 6px; 
-		margin-right: 5px; 
-		margin-top: 5px;
-		margin-bottom: 5px;
-		color:black;
-	}
-	
-	.mapHelperEditMode .ChinaMapHelper .mapHelperButton{
-		display: inline-block !important;
-		padding-left: 0px;
-	}
-
-	.mapHelperEditMode .ChinaMapHelper .mapHelperButton{
-		display: inline-block !important;
-		padding-left: 0px;
-	}
-
-	.ChinaMapHelper .checkbox{
-		display: none;
-	}
-	.mapHelperEditMode .ChinaMapHelper .checkbox{
-		display: inline;
-	}
-
-	.mapHelperEditMode .ChinaMapHelper .checkbox:after {
-		padding: 0.7em;
-		margin: 0;
-		background-color: #00000033;
-	}
-
-	.multiPointsTable{
-		width: 100%;
-	}
-	`;
-	var node = document.createElement('style');
-	node.appendChild(document.createTextNode(css));
-	document.getElementsByTagName('head')[0].appendChild(node);
-
-	// add "Search" to "edit" texts
-	document.querySelectorAll(".titleEditBox.poi-edit-box .poi-edit-text").forEach(function(box) {
-	  var p = box.querySelector("p") || box;
-	  var searchTerm = encodeURIComponent(p.innerText).replace(/\'/g,"%27");
-	  var span = document.createElement('span');
-	  span.style.cssFloat = "right";
-	  span.innerHTML =
-		"<a target='ChinaMapHelperSearch' href='https://www.google.com/search?q="+searchTerm+"'>🔍</a>"
-	  p.appendChild(span);
+/**
+ * 為了 script 獨立執行時，沒有 @require 到 PRCoords
+ */
+(function( scriptsrc ){
+	return new Promise( (resolve,reject)=>{
+		if(window.PRCoords){
+			resolve();
+		}else{
+			var script = document.createElement("script");
+			script.src = scriptsrc;
+			script.onload = resolve;
+			script.onerror = reject;
+			
+			document.head.appendChild(script);
+		}
 	});
+})("https://cdn.jsdelivr.net/npm/prcoords@1.0.5/js/PRCoords.min.js").then( ()=>{
 
-}, 1999);
+	setInterval(function(){
+		if( ! location.href.includes("new/review") ) return;
+		if( document.querySelector(".mapHelperButton") ) return;
+
+		// 先用笨的方法取得 lat, lng, 先推出能用再想
+		let linkInfo1;
+		try {
+			linkInfo1 = new LinkInfo();
+			[ , linkInfo1.lat, linkInfo1.lng]
+				= document.querySelector("a[href*='maps?ll=']").href.match( /ll=([0-9\.]+),([0-9\.]+)&/ );
+		} catch(e) {
+			// console.log( e );
+			return;
+		}
+		// info OK
+
+		// console.log( linkInfo1 );
+		var div = document.createElement('div');
+		div.className = "ChinaMapHelper";
+		div.innerHTML = linkInfo1.genButtons();
+
+		// 要加入在這麼多地方是因為：方便不同習慣的人、手機版比較好找、有些是審PHOTO/EDIT時特有
+		document.querySelectorAll( [
+			"app-should-be-wayspot .wf-review-card",
+			"#location-accuracy-card .wf-review-card__footer",
+			"#check-duplicates-card",
+			"#title-description-card",
+			".review-photo__info", // PHOTO
+			".review-edit-info>.ng-star-inserted", // EDIT
+		].join() ).forEach( node=>{
+			node.appendChild( div.cloneNode(true) );
+		} );
+
+		ChinaMapHelper.loadSettings();
+		ChinaMapHelper.updateButtonsDisplay();
+
+		var css = /*css*/`
+		.ChinaMapHelper{
+			display: inline-block;
+		}
+		.ChinaMapHelper .mapHelperButton,
+		.ChinaMapHelper .button-settings{
+			display: inline-block; 
+			min-width: auto; 
+			padding: 7px 6px; 
+			margin-right: 5px; 
+			margin-top: 5px;
+			margin-bottom: 5px;
+			color:black;
+		}
+		
+		.mapHelperEditMode .ChinaMapHelper .mapHelperButton{
+			display: inline-block !important;
+			padding-left: 0px;
+		}
+
+		.mapHelperEditMode .ChinaMapHelper .mapHelperButton{
+			display: inline-block !important;
+			padding-left: 0px;
+		}
+
+		.ChinaMapHelper .checkbox{
+			display: none;
+		}
+		.mapHelperEditMode .ChinaMapHelper .checkbox{
+			display: inline;
+		}
+
+		.mapHelperEditMode .ChinaMapHelper .checkbox:after {
+			padding: 0.7em;
+			margin: 0;
+			background-color: #00000033;
+		}
+
+		.multiPointsTable{
+			width: 100%;
+		}
+		`;
+		var node = document.createElement('style');
+		node.appendChild(document.createTextNode(css));
+		document.getElementsByTagName('head')[0].appendChild(node);
+
+		// add "Search" to "edit" texts
+		document.querySelectorAll(".titleEditBox.poi-edit-box .poi-edit-text").forEach(function(box) {
+			var p = box.querySelector("p") || box;
+			var searchTerm = encodeURIComponent(p.innerText).replace(/\'/g,"%27");
+			var span = document.createElement('span');
+			span.style.cssFloat = "right";
+			span.innerHTML =
+			"<a target='ChinaMapHelperSearch' href='https://www.google.com/search?q="+searchTerm+"'>🔍</a>"
+			p.appendChild(span);
+		});
+
+	}, 1999);
+});
 
 })();
