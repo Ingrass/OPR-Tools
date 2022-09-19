@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      1.2
+// @version      1.3
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.meta.js
@@ -13,7 +13,10 @@
 // ==/UserScript==
 
 /*
-v1.2
+v1.3 19/9/2022
+- fix 座標不正確問題
+
+v1.2 27/8/2021
 - 修復 "審EDIT" 的 tools 顯示
 - 修改 @include 為 *(全站)，因為新網站是不會跳頁的，必須在任何一個子網址進入都要載入 script
 
@@ -235,12 +238,15 @@ LinkInfo.prototype.get_BTAO_link = function() {
 		if( ! location.href.includes("new/review") ) return;
 		if( document.querySelector(".mapHelperButton") ) return;
 
-		// 先用笨的方法取得 lat, lng, 先推出能用再想
+		// 取得 lat, lng
 		let linkInfo1;
 		try {
+			let t0 = document.querySelector("nia-map").__ngContext__;
+			let t1 = t0[t0.length-1];
+
 			linkInfo1 = new LinkInfo();
-			[ , linkInfo1.lat, linkInfo1.lng]
-				= document.querySelector("a[href*='maps?ll=']").href.match( /ll=([0-9\.]+),([0-9\.]+)&/ );
+			linkInfo1.lat = t1._latitude._value;
+			linkInfo1.lng = t1._longitude._value;
 		} catch(e) {
 			// console.log( e );
 			return;
