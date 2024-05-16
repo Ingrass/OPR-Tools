@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      1.3
+// @version      1.4
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.meta.js
@@ -13,7 +13,10 @@
 // ==/UserScript==
 
 /*
-v1.3 19/9/2022
+v1.4 17/5/2024
+- fix button字色在drak mode也是黑的問題
+
+v1.3 
 - fix 座標不正確問題
 
 v1.2 27/8/2021
@@ -285,7 +288,6 @@ LinkInfo.prototype.get_BTAO_link = function() {
 			margin-right: 5px; 
 			margin-top: 5px;
 			margin-bottom: 5px;
-			color:black;
 		}
 		
 		.mapHelperEditMode .ChinaMapHelper .mapHelperButton{
