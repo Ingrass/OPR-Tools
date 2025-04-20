@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      1.4
+// @version      1.5
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.meta.js
@@ -13,6 +13,9 @@
 // ==/UserScript==
 
 /*
+v1.5 21/4/2025
+- fix 腾讯 map url
+
 v1.4 17/5/2024
 - fix button字色在drak mode也是黑的問題
 
@@ -175,8 +178,7 @@ LinkInfo.prototype. genButtons = function(){
 
 LinkInfo.prototype.get_tencent_link = function() {
 	var gcj = PRCoords.wgs_gcj({ lat: this.lat, lon: this.lng});
-	return "https://map.qq.com/?type=marker&isopeninfowin=1&markertype=1&name=" 
-		+ encodeURIComponent(this.title).replace(/\'/g,"%27") + "&addr=+&pointy=" + gcj.lat + "&pointx=" + gcj.lon;
+	return "https://apis.map.qq.com/uri/v1/marker?marker=coord:" + gcj.lat + "," + gcj.lon + ";title:marker";
 };
 
 LinkInfo.prototype.get_baidu_link = function() {
