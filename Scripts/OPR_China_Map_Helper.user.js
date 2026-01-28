@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         OPR China Map Helper
-// @version      1.6
+// @version      1.7
 // @category     Info
 // @namespace    https://github.com/Ingrass/OPR-Tools/
 // @updateURL    https://github.com/Ingrass/OPR-Tools/raw/master/Scripts/OPR_China_Map_Helper.meta.js
@@ -14,6 +14,12 @@
 // ==/UserScript==
 
 /*
+v1.7 28/01/2026
+- add Lightship map button
+- fix photo review
+- refactoring
+- remove edit text search button (not working)
+
 v1.6 11/11/2025
 - 更新網址 opr.ingress.com
 
@@ -89,9 +95,9 @@ v0.5
 - 對 title edit 加入 Google 和 百度 search 的按鈕
 */
 
-(function(){
-
 window.ChinaMapHelper = {
+	reviewData: null,
+
 	BUTTONS: [
 		{ name:"intel", fn:"get_intel_link" },
 		{ name:"百度", fn:"get_baidu_link" },
@@ -101,6 +107,7 @@ window.ChinaMapHelper = {
 		{ name:"百/腾", fn:"get_BaiduQQ_link" },
 		{ name:"百/腾/高", fn:"get_BTA_link" },
 		{ name:"百/腾/高/OSM+", fn:"get_BTAO_link" },
+		{ name:"Lightship", fn:"get_Lightship_link" },
 	],
 
 	loadSettings(){
@@ -125,13 +132,13 @@ window.ChinaMapHelper = {
 			let show = buttonsToShow.includes( b.name );
 	
 			css += /*css*/`
-.ChinaMapHelper .mapHelperButton:nth-child(${i+2}) {
-	display: ${show?"inline-block":"none"};
-}
+				.ChinaMapHelper .mapHelperButton:nth-child(${i+2}) {
+					display: ${show?"inline-block":"none"};
+				}
 
-.mapHelperEditMode	.ChinaMapHelper .mapHelperButton:nth-child(${i+2}) .checkbox:after {
-	content: "${show?"☑":"☐"}";
-}
+				.mapHelperEditMode	.ChinaMapHelper .mapHelperButton:nth-child(${i+2}) .checkbox:after {
+					content: "${show?"☑":"☐"}";
+				}
 			`;
 		});
 	
@@ -152,7 +159,173 @@ window.ChinaMapHelper = {
 		this.saveSettings();
 		this.updateButtonsDisplay();
 	},
+
+	watch_new_review() {
+		const originalOpen = XMLHttpRequest.prototype.open;
+		const This = this;
+		XMLHttpRequest.prototype.open = function (method, url) {
+			if (url === "/api/v1/vault/review" && method === "GET") {
+				this.addEventListener("load", function () {
+					try {
+						const data = JSON.parse(this.responseText);
+						This.reviewData = data.result;
+						console.log( "ChinaMapHelper: Captured review data", this.reviewData );
+					} catch (err) {
+						console.error("Failed to parse review response", err);
+					}
+				});
+			}
+			return originalOpen.apply(this, arguments);
+		};
+	},
+
+	/**
+	 * 為了 script 獨立執行時，沒有 @require 到 PRCoords
+	 */
+	ifNotLoadPRCoords_loadIt(){
+		const scriptsrc = "https://cdn.jsdelivr.net/npm/prcoords@1.0.5/js/PRCoords.min.js"
+		return new Promise( (resolve,reject)=>{
+			if(window.PRCoords){
+				resolve();
+			}else{
+				var script = document.createElement("script");
+				script.src = scriptsrc;
+				script.onload = resolve;
+				script.onerror = reject;
+				
+				document.head.appendChild(script);
+			}
+		} );
+	},
+
+	startTimer_adding_buttons(){
+		setInterval(()=>{
+			if( ! location.href.includes("new/review") ) return;
+			if( document.querySelector(".mapHelperButton") ) return;
+
+/*
+	{
+    "type": "EDIT",
+    "id": "aede11111111111111111.14",
+    "lat": 22.11111,
+    "lng": 114.22222,
+    "title": "花槽...",
+    "description": "位於...",
+    "imageUrl": "https://lh3.googleusercontent.com/...",
+    "titleEdits": [],
+    "descriptionEdits": [],
+    "locationEdits": [
+			{
+				"value": "22.11111,114.22222",
+				"hash": "1e123123213212c",
+				"lat": "22.11111",
+				"lng": "114.22222"
+			},
+			{
+				"value": "22.33333,114.44444",
+				"hash": "4dcb12321321321319ed5",
+				"lat": "22.33333",
+				"lng": "114.44444"
+			}
+    ]
+	}
+*/
+			// 取得 lat, lng
+			let linkInfo1;
+
+			try {
+				linkInfo1 = new LinkInfo( {
+					lat: this.reviewData.lat,
+					lng: this.reviewData.lng,
+					title: this.reviewData.title,
+					otherLocations: ( this.reviewData.locationEdits || [] ).splice(1),
+				} );
+				
+			} catch(e) {
+				console.error( e );
+				return;
+			}
+			// info OK
+
+			// console.log( linkInfo1 );
+			var div = document.createElement('div');
+			div.className = "ChinaMapHelper";
+			div.innerHTML = linkInfo1.genButtons();
+
+			// 要加入在這麼多地方是因為：方便不同習慣的人、手機版比較好找、有些是審PHOTO/EDIT時特有
+			document.querySelectorAll( [
+				"app-should-be-wayspot .wf-review-card",
+				"#location-accuracy-card .wf-review-card__footer",
+				"#check-duplicates-card",
+				"#title-description-card",
+				"app-review-photo", // PHOTO
+				".review-edit-info>.ng-star-inserted", // EDIT
+			].join() ).forEach( node=>{
+				node.appendChild( div.cloneNode(true) );
+			} );
+
+			ChinaMapHelper.loadSettings();
+			ChinaMapHelper.updateButtonsDisplay();
+
+		}, 1999);
+	},
+
+	appendCSS() {
+		const css = /*css*/`
+			.ChinaMapHelper{
+				display: inline-block;
+			}
+			.ChinaMapHelper .mapHelperButton,
+			.ChinaMapHelper .button-settings{
+				display: inline-block; 
+				min-width: auto; 
+				padding: 7px 6px; 
+				margin-right: 5px; 
+				margin-top: 5px;
+				margin-bottom: 5px;
+			}
+			
+			.mapHelperEditMode .ChinaMapHelper .mapHelperButton{
+				display: inline-block !important;
+				padding-left: 0px;
+			}
+
+			.mapHelperEditMode .ChinaMapHelper .mapHelperButton{
+				display: inline-block !important;
+				padding-left: 0px;
+			}
+
+			.ChinaMapHelper .checkbox{
+				display: none;
+			}
+			.mapHelperEditMode .ChinaMapHelper .checkbox{
+				display: inline;
+			}
+
+			.mapHelperEditMode .ChinaMapHelper .checkbox:after {
+				padding: 0.7em;
+				margin: 0;
+				background-color: #00000033;
+			}
+
+			.multiPointsTable{
+				width: 100%;
+			}
+		`;
+		let node = document.createElement("style");
+		node.textContent = css;
+		document.body.appendChild(node);
+	},
+
+	async init(){
+		await this.ifNotLoadPRCoords_loadIt();
+		this.appendCSS();
+		this.startTimer_adding_buttons();
+		this.watch_new_review();
+	},
 };
+
+//===
 
 function LinkInfo(portalInfo={}){
 	this.lng = portalInfo.lng;
@@ -167,14 +340,17 @@ LinkInfo.prototype. genButtons = function(){
 		>+</a>`;
 
 	ChinaMapHelper.BUTTONS.forEach( (b,i)=>{
-		html += /*html*/`<a class='mapHelperButton wf-button button-map' target='mapHelper1'	href='${this[b.fn]()}'>
-			<span class="checkbox" onclick="
-				event.stopPropagation();
-				event.preventDefault();
-				window.ChinaMapHelper.toggleButtonShow(${i});
-				return false;
-				"></span>
-		${b.name}</a>`;
+		html += /*html*/`
+			<a class='mapHelperButton wf-button button-map' target='mapHelper1'	href='${this[b.fn]()}'>
+				<span class="checkbox" onclick="
+					event.stopPropagation();
+					event.preventDefault();
+					window.ChinaMapHelper.toggleButtonShow(${i});
+					return false;
+					"></span>
+				${b.name}
+			</a>
+		`;
 	} );
 
 	return html;
@@ -208,6 +384,10 @@ LinkInfo.prototype.get_GoogleMap_link = function() {
 	return "https://maps.google.com/?q=@" + this.lat + "," + this.lng;
 };
 
+LinkInfo.prototype.get_Lightship_link = function() {
+	return `https://lightship.dev/account/geospatial-browser/${this.lat},${this.lng},15,,`;
+};
+
 LinkInfo.prototype.get_BaiduQQ_link = function() {
 	var s = this.otherLocations.map(x => x.lat + "," + x.lng).join();
 	return "https://brainstorming.azurewebsites.net/index.html#" + this.lat + "," + this.lng+"," +(s||"0");
@@ -225,120 +405,5 @@ LinkInfo.prototype.get_BTAO_link = function() {
   return "https://brainstorming.azurewebsites.net/index5.html#" + this.lat + "," + this.lng+"," +(s||"0");
 };
 
-/**
- * 為了 script 獨立執行時，沒有 @require 到 PRCoords
- */
-(function( scriptsrc ){
-	return new Promise( (resolve,reject)=>{
-		if(window.PRCoords){
-			resolve();
-		}else{
-			var script = document.createElement("script");
-			script.src = scriptsrc;
-			script.onload = resolve;
-			script.onerror = reject;
-			
-			document.head.appendChild(script);
-		}
-	});
-})("https://cdn.jsdelivr.net/npm/prcoords@1.0.5/js/PRCoords.min.js").then( ()=>{
-
-	setInterval(function(){
-		if( ! location.href.includes("new/review") ) return;
-		if( document.querySelector(".mapHelperButton") ) return;
-
-		// 取得 lat, lng
-		let linkInfo1;
-		try {
-			let t0 = document.querySelector("nia-map").__ngContext__;
-			let t1 = t0[t0.length-1];
-
-			linkInfo1 = new LinkInfo();
-			linkInfo1.lat = t1._latitude._value;
-			linkInfo1.lng = t1._longitude._value;
-		} catch(e) {
-			// console.log( e );
-			return;
-		}
-		// info OK
-
-		// console.log( linkInfo1 );
-		var div = document.createElement('div');
-		div.className = "ChinaMapHelper";
-		div.innerHTML = linkInfo1.genButtons();
-
-		// 要加入在這麼多地方是因為：方便不同習慣的人、手機版比較好找、有些是審PHOTO/EDIT時特有
-		document.querySelectorAll( [
-			"app-should-be-wayspot .wf-review-card",
-			"#location-accuracy-card .wf-review-card__footer",
-			"#check-duplicates-card",
-			"#title-description-card",
-			".review-photo__info", // PHOTO
-			".review-edit-info>.ng-star-inserted", // EDIT
-		].join() ).forEach( node=>{
-			node.appendChild( div.cloneNode(true) );
-		} );
-
-		ChinaMapHelper.loadSettings();
-		ChinaMapHelper.updateButtonsDisplay();
-
-		var css = /*css*/`
-		.ChinaMapHelper{
-			display: inline-block;
-		}
-		.ChinaMapHelper .mapHelperButton,
-		.ChinaMapHelper .button-settings{
-			display: inline-block; 
-			min-width: auto; 
-			padding: 7px 6px; 
-			margin-right: 5px; 
-			margin-top: 5px;
-			margin-bottom: 5px;
-		}
-		
-		.mapHelperEditMode .ChinaMapHelper .mapHelperButton{
-			display: inline-block !important;
-			padding-left: 0px;
-		}
-
-		.mapHelperEditMode .ChinaMapHelper .mapHelperButton{
-			display: inline-block !important;
-			padding-left: 0px;
-		}
-
-		.ChinaMapHelper .checkbox{
-			display: none;
-		}
-		.mapHelperEditMode .ChinaMapHelper .checkbox{
-			display: inline;
-		}
-
-		.mapHelperEditMode .ChinaMapHelper .checkbox:after {
-			padding: 0.7em;
-			margin: 0;
-			background-color: #00000033;
-		}
-
-		.multiPointsTable{
-			width: 100%;
-		}
-		`;
-		var node = document.createElement('style');
-		node.appendChild(document.createTextNode(css));
-		document.getElementsByTagName('head')[0].appendChild(node);
-
-		// add "Search" to "edit" texts
-		document.querySelectorAll(".titleEditBox.poi-edit-box .poi-edit-text").forEach(function(box) {
-			var p = box.querySelector("p") || box;
-			var searchTerm = encodeURIComponent(p.innerText).replace(/\'/g,"%27");
-			var span = document.createElement('span');
-			span.style.cssFloat = "right";
-			span.innerHTML =
-			"<a target='ChinaMapHelperSearch' href='https://www.google.com/search?q="+searchTerm+"'>🔍</a>"
-			p.appendChild(span);
-		});
-
-	}, 1999);
-});
-
-})();
+//===
+ChinaMapHelper.init();
