@@ -18,9 +18,6 @@ javascript:(function(F,i,r,e,k,u,I,E){if(F.getElementById(k))return;E=F[i+'NS']&
 - https://sspai.com/post/26196
 - https://kknews.cc/tech/69p22kl.html
 
-#### Android上如何用 userscript
-https://telegra.ph/Android上如何用-userscript-07-12
-
 ---
 
 ![readme](Readme/demo0.png)
@@ -28,4 +25,3 @@ https://telegra.ph/Android上如何用-userscript-07-12
 ![readme](Readme/demo2.png)
 ![readme](Readme/demo_editTitle.png)
 ![readme](Readme/demo_editLocations.png)
-![readme](Readme/demo_multimap_and_multipoints.png)
